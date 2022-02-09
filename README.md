@@ -1,6 +1,13 @@
 # BMSTU_6sem_operating_systems
 6th sem BMSTU, Operating systems
 
+**where is Ubuntu:**
+
+C:\Users\alena\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\alena
+
+
+
+
 https://github.com/Euclidophren/OperationSystems
 (10 лаб с ответами)
 
