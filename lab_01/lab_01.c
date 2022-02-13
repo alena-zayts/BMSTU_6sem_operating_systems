@@ -1,20 +1,3 @@
-// Запускаем два терминала, в одном папка с программой:
-// gcc lab_01.c -pthread -Wall -Werror -o main.exe
-// sudo ./main.exe
-// ps -ajx | grep "./main"
-
-// Во втором терминале открываем cd /var/log
-// sudo cat syslog
-
-// По ps: 
-// -Ssl
-// S - процесс находится в режиме прерываемого сна
-// s - процесс является лидером сессии
-// l - процесс является многопоточным
-// tty - имя терминала, отвечающего за процесс
-// tpgid - айди группы процессов терминала, с которым связан процесс. Если -1, то процесс не связан с терминалом
-// uid - user id
-
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -33,27 +16,9 @@
 
 sigset_t mask;
 
-// стр. 560
+
 int lockfile(int fd)
 {
-	// Эта структура используется для управления блокировкой и имеет следующее содержание:
-	// struct flock
-	// {
-	// 	short l_type; /*3 режима блокирования
-	//                F_RDLCK(Разделение чтения)
-	//                F_WRLCK (Разделение записи)
-	//                F_UNLCK (Прекратить разделение)*/
-
-	// 	off_t l_start; /*относительное смещение в байтах,
-	//               зависит от l_whence*/
-
-	// 	short l_whence; /*SEEK_SET;SEEK_CUR;SEEK_END*/
-
-	// 	off_t l_len; /*длина, 0=разделение до конца файла*/
-
-	// 	pid_t l_pid; /*идентификатор, возвращается F_GETLK */
-	// };
-
 	struct flock fl;
 
 	fl.l_type = F_WRLCK;
@@ -72,7 +37,7 @@ int alreadyRunning(void)
     if (fd < 0) 
 	{
         syslog(LOG_ERR, "не возможно открыть %s: %s", LOCKFILE,
-               strerror(errno));
+        strerror(errno));
         exit(1);
     }
 
@@ -104,17 +69,18 @@ void *threadFun(void *arg)
 {
     int err, signo;
 
-    for (;;) {
-        // syslog(LOG_INFO, "Поток для сигналов: %ld", pthread_self());
+    for (;;) 
+	{
+        syslog(LOG_INFO, "Поток обработки сигналов: %ld.\n", pthread_self());
         err = sigwait(&mask, &signo);
         if (err != 0)
-            quit("ошибка вызова функции sigwait", "");
+            quit("ошибка вызова функции sigwait\n", "");
         switch (signo) {
             case SIGHUP:
-                syslog(LOG_INFO, "получен сигнал SIGHUP; getlogin=%s", getlogin());
+                syslog(LOG_INFO, "получен сигнал SIGHUP; getlogin=%s\n", getlogin());
                 break;
             case SIGTERM:
-                syslog(LOG_INFO, "получен сигнал SIGTERM; выход");
+                syslog(LOG_INFO, "получен сигнал SIGTERM; выход\n");
                 exit(0);
             default:
                 syslog(LOG_INFO, "получен непредвиденный сигнал %d\n", signo);
@@ -123,7 +89,8 @@ void *threadFun(void *arg)
     return 0;
 }
 
-void daemonize(const char *cmd) {
+void daemonize(const char *cmd) 
+{
     int i, fd0, fd1, fd2;
     pid_t pid;
     struct rlimit rl;
@@ -132,25 +99,25 @@ void daemonize(const char *cmd) {
     umask(0);
 
     if (getrlimit(RLIMIT_NOFILE, &rl) < 0)
-        quit("%s: невозможно получить максимальный номер дескриптора ", cmd);
+        quit("%s: невозможно получить максимальный номер дескриптора\n", cmd);
 
     if ((pid = fork()) < 0)
-        quit("%s: ошибка вызова функции fork", cmd);
+        quit("%s: ошибка вызова функции fork\n", cmd);
     else if (pid != 0) 
         exit(0);
     
     setsid();
 
-    // Убираем возможность обретения управляющего терминала
+    // Убрать возможность обретения управляющего терминала
     sa.sa_handler = SIG_IGN;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
 	
     if (sigaction(SIGHUP, &sa, NULL) < 0)
-        quit("%s: невозможно игнорировать сигнал SIGHUP ", cmd);
+        quit("%s: невозможно игнорировать сигнал SIGHUP\n", cmd);
 
     if (chdir("/") < 0)
-        quit("%s: невозможно сделать текущим рабочим каталогом /", cmd);
+        quit("%s: невозможно сделать текущим корневой каталог\n", cmd);
 
     if (rl.rlim_max == RLIM_INFINITY) 
 		rl.rlim_max = 1024;
@@ -165,7 +132,7 @@ void daemonize(const char *cmd) {
     openlog(cmd, LOG_CONS, LOG_DAEMON);
     if (fd0 != 0 || fd1 != 1 || fd2 != 2) 
 	{
-        syslog(LOG_ERR, "ошибочные файловые дескрипторы %d %d %d", fd0, fd1, fd2);
+        syslog(LOG_ERR, "ошибочные файловые дескрипторы %d %d %d\n", fd0, fd1, fd2);
         exit(1);
     }
 }
@@ -174,7 +141,7 @@ int main() {
     daemonize("my_daemon");
 
     if (alreadyRunning())
-		quit("демон уже запущен", "");
+		quit("демон уже запущен\n", "");
 
     int err;
 	pthread_t tid;
@@ -184,46 +151,32 @@ int main() {
      * Восстановить действие по умолчанию для сигнала SIGHUP
      * и заблокировать все сигналы
     */
+	
     sa.sa_handler = SIG_DFL;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	if (sigaction(SIGHUP, &sa, NULL) < 0)
-        quit("невозможно восстановить действие SIG_DFL для SIGHUP", "");
+        quit("невозможно восстановить действие SIG_DFL для SIGHUP\n", "");
 
 	sigfillset(&mask);
 	if ((err = pthread_sigmask(SIG_BLOCK, &mask, NULL)) != 0)
-        quit("ошибка выполнения операции SIG_BLOCK", "");
+        quit("ошибка выполнения операции SIG_BLOCK\n", "");
 
-    /*
-     *  Создание потока, который будет заниматься обработкой SIGHUP и SIGTERM
-     */
     err = pthread_create(&tid, NULL, threadFun, 0);
 	if (err != 0)
-        quit("невозможно создать поток", "");
+        quit("невозможно создать поток обработки сигналов\n", "");
 
-// Эксперимент!!!
-/*
-    int signo;
 
-    for (;;) {
-        err = sigwait(&mask, &signo);
-        if (err != 0)
-            quit("ошибка вызова функции sigwait", "");
-        switch (signo) {
-            case SIGHUP:
-                syslog(LOG_INFO, "Вызов getlogin. Результат: %s", getlogin());
-                break;
-            case SIGTERM:
-                syslog(LOG_INFO, "получен сигнал SIGTERM; выход");
-                exit(0);
-            default:
-                syslog(LOG_INFO, "получен непредвиденный сигнал %d\n", signo);
-        }
-    }
-    */
+	long int ttime;
 
-    while (1) {
-        syslog(LOG_INFO, "Идентификатор созданного потока для обработки сигнала: %ld", tid);
-        sleep(5);
-    }
+	
+
+	while (1)
+	{
+		ttime = time(NULL);
+		syslog(LOG_INFO, "Демон! Время: %s. Идентификатор созданного потока для обработки сигнала: %ld", 
+			   ctime(&ttime), tid);
+		sleep(3);
+	}
+
 }

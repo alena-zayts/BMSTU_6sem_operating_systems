@@ -1,14 +1,11 @@
-CC=gcc
-FLAGS=-Wall -Werror -pthread
-
 app.exe:
-	$(CC) $(FLAGS) lab_01.c -o app.exe
+	gcc -Wall -Werror -pthread lab_01.c -o app.exe
 
 run: app.exe
 	sudo ./app.exe
 
 log:
-	sudo cat /var/log/syslog
+	sudo cat /var/log/syslog | grep "my_daemon"
 
 signal:
 	sudo kill -9 pid
