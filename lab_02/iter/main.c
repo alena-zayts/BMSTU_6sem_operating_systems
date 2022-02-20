@@ -82,7 +82,7 @@ static int increment_stats(const char *pathname, const struct stat * statptr, in
 			return(-1);
     }
 
-    printf("    ├── %s%s\n", pathname, RESET_COLOR);
+    printf("    ├── %s     inode=%d %s\n", pathname, (int) statptr->st_ino, RESET_COLOR);
 
     return 0;
 }

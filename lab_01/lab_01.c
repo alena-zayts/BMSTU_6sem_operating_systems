@@ -81,6 +81,19 @@ void *threadFun(void *arg)
                 break;
             case SIGTERM:
                 syslog(LOG_INFO, "получен сигнал SIGTERM; выход\n");
+				if (remove(LOCKFILE) == -1)
+				{
+					syslog(LOG_ERR, "ошибка прии удалении файла\n");
+					exit(1);
+				}
+                exit(0);
+			case SIGKILL:
+			    syslog(LOG_INFO, "получен сигнал SIGKILL; выход\n");
+				if (remove(LOCKFILE) == -1)
+				{
+					syslog(LOG_ERR, "ошибка прии удалении файла\n");
+					exit(1);
+				}
                 exit(0);
             default:
                 syslog(LOG_INFO, "получен непредвиденный сигнал %d\n", signo);
@@ -177,6 +190,12 @@ int main() {
 		syslog(LOG_INFO, "Демон! Время: %s. Идентификатор созданного потока для обработки сигнала: %ld", 
 			   ctime(&ttime), tid);
 		sleep(3);
+	}
+	
+	if (remove(LOCKFILE) == -1)
+	{
+		syslog(LOG_ERR, "ошибка прии удалении файла\n");
+		exit(1);
 	}
 
 }
