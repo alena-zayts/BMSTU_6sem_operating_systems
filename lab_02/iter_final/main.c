@@ -5,7 +5,6 @@
 #include <sys/stat.h>
 
 #include "stack.h"
-
 #define FTW_F 1 
 #define FTW_D 2 
 #define FTW_DNR 3 
@@ -21,10 +20,10 @@ typedef int Myfunc(const char *, const struct stat *, int, int);
 
 static Myfunc increment_stats;
 static int my_ftw(char *, Myfunc * );
-int dopath(Myfunc *func, char *fullpath, int depth);
+int dopath(Myfunc *func, char *path, int depth);
 
 static long nreg, ndir, nblk, nchr, nfifo, nslink, nsock, ntot;
-static struct stack stack_t;
+static struct stack_node_t* stack_top;
 
 void printStats()
 {
@@ -89,11 +88,11 @@ static int increment_stats(const char *pathname, const struct stat * statptr, in
 
 
 // Обход дерева каталогов
-int dopath(Myfunc *func, char *fullpath, int depth)
+int dopath(Myfunc *func, char *path, int depth)
 {
     if (depth < 0)
     {
-        chdir(fullpath);
+        chdir(path);
         return 0;
     }
 
@@ -101,21 +100,21 @@ int dopath(Myfunc *func, char *fullpath, int depth)
     struct dirent *dirp;
     DIR *dp;
 	
-	if (lstat(fullpath, &statbuf) == -1)
+	if (lstat(path, &statbuf) == -1)
         return -1;
 
     if (!S_ISDIR(statbuf.st_mode))
     {
-        func(fullpath, &statbuf, FTW_F, depth);
+        func(path, &statbuf, FTW_F, depth);
         return 0;
     }
 
-    func(fullpath, &statbuf, FTW_D, depth);
+    func(path, &statbuf, FTW_D, depth);
 
-    if ((dp = opendir(fullpath)) == NULL)
+    if ((dp = opendir(path)) == NULL)
         return -1;
 
-    if (chdir(fullpath) == -1)
+    if (chdir(path) == -1)
     {
         closedir(dp);
         return -1;
@@ -124,19 +123,31 @@ int dopath(Myfunc *func, char *fullpath, int depth)
     depth++;
 
     // Элемент возврата
-    struct stackItem item = {.fileName = "..", .depth = -1};
-	if (push(&stack_t, &item) == -1)
+	struct stack_node_t *node = stack_node_create("..", -1);
+	if (!node)
 	{
-        closedir(dp);
-        return -1;
-    }
+		closedir(dp);
+		return -1;
+	}
+	
+	stack_top = push(stack_top, node);
+
+    if (!stack_top)
+	{
+		closedir(dp);
+		return -1;
+	}
+
 
     while ((dirp = readdir(dp)) != NULL)
     {
         if (strcmp(dirp->d_name, ".") != 0 && strcmp(dirp->d_name, "..") != 0)
         {
 			if (lstat(dirp->d_name, &statbuf) == -1)
+			{
+				closedir(dp);
 				return -1;
+			}
 	
 			if (!S_ISDIR(statbuf.st_mode))
 			{
@@ -144,10 +155,16 @@ int dopath(Myfunc *func, char *fullpath, int depth)
 			}
 			else
 			{
-				strcpy(item.fileName, dirp->d_name);
-				item.depth = depth;
+				struct stack_node_t *node = stack_node_create(dirp->d_name, depth);
+				if (!node)
+				{
+					closedir(dp);
+					return -1;
+				}
+	
+				stack_top = push(stack_top, node);
 
-				if (push(&stack_t, &item) == -1)
+				if (!stack_top)
 				{
 					closedir(dp);
 					return -1;
@@ -172,7 +189,7 @@ static int my_ftw(char *pathname, Myfunc *func)
         return -1;
     }
 
-    init(&stack_t);
+    stack_top = NULL;
 
     
     char cwd[PATH_MAX];
@@ -182,17 +199,30 @@ static int my_ftw(char *pathname, Myfunc *func)
         return -1;
     }
 	
-	struct stackItem item = {.depth = 0};
-    strcpy(item.fileName, cwd);
-    if (push(&stack_t, &item) == -1)
+	struct stack_node_t *node = stack_node_create(cwd, 0);
+	
+	if (!node)
 		return -1;
+	
+	stack_top = push(stack_top, node);
 
-    while (!is_empty(&stack_t))
+    if (!stack_top)
+		return -1;
+	
+	int rc = 0;
+    while (stack_top && rc == 0)
     {
-        dopath(func, item.fileName, item.depth);
-        item = pop(&stack_t);
+		node = pop(&stack_top);
+        rc = dopath(func, node->filename, node->depth);
+		stack_node_free(node);
     }
-
+	
+	if (rc != 0)
+	{
+		stack_free(stack_top);
+		return -1;
+	}
+  
     printStats();
 
     return 0;
