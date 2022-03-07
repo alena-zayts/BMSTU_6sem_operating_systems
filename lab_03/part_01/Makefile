@@ -23,7 +23,7 @@ remove:
 	sudo rmmod md.ko
 
 info:
-	modinfo md.ko
+	sudo modinfo md.ko
 
 logs:
-	dmesg
+	dmesg | tail -n400 | grep +
