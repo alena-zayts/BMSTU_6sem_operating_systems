@@ -1,0 +1,1 @@
+cmd_/media/psf/Home/Desktop/BMSTU_6sem_operating_systems/BMSTU_6sem_operating_systems/lab_03/part_01/modules.order := {   echo /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/BMSTU_6sem_operating_systems/lab_03/part_01/md.ko; :; } | awk '!x[$$0]++' - > /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/BMSTU_6sem_operating_systems/lab_03/part_01/modules.order

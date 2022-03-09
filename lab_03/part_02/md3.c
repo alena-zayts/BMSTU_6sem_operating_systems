@@ -16,7 +16,7 @@ static int __init md_init(void)
 	printk("+ string returned md1_proc() is : %s\n", md1_proc());
 
 	//printk("+ Попытка вызвать md1_noexport\n");
-	//printk("+ string returned md1_noexport() is : %s\n", md1_noexport());
+	// printk("+ string returned md1_noexport() is : %s\n", md1_noexport());
 	//printk("+ md1_noexport был вызван\n");
 
 	// printk("+ Попытка вызвать md1_local\n");

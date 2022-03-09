@@ -1,5 +1,5 @@
 md1.o: \
- /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_03/part_02/md1.c \
+ /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/BMSTU_6sem_operating_systems/lab_03/part_02/md1.c \
  include/linux/compiler-version.h include/linux/kconfig.h \
  include/generated/autoconf.h include/linux/compiler_types.h \
  include/linux/compiler_attributes.h include/linux/compiler-gcc.h \
@@ -164,4 +164,4 @@ md1.o: \
  include/asm-generic/error-injection.h include/linux/cfi.h \
  arch/x86/include/asm/module.h include/asm-generic/module.h \
  arch/x86/include/asm/orc_types.h \
- /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_03/part_02/md.h
+ /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/BMSTU_6sem_operating_systems/lab_03/part_02/md.h
