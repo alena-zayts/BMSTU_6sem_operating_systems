@@ -1,0 +1,9 @@
+Test1
+100
+Test2
+200
+Test1
+100
+Test3
+50
+

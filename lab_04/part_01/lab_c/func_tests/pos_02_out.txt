@@ -1,0 +1,10 @@
+Too simple:
+Test1
+1
+Choose one of this:
+Test2
+5
+Added
+10
+Test2
+30
