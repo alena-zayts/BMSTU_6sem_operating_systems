@@ -1,0 +1,1154 @@
+Файл cmdline: содержит полную командную строку процесса, если процесс не находится в состоянии зомби, иначе файл пуст.
+Содержимое:
+--------------------------------------------------------------------------------------------------
+./app.exe
+
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Символическая ссылка cwd: указывает на директорию процесса (специальный файл, который сожержит путь к файлу).
+Содержимое:
+--------------------------------------------------------------------------------------------------
+/home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Символическая ссылка exe: указывает на образ процесса (его exe-файл, фактический путь к выполняемой команде).
+Эта символическая ссылка может быть разыменована обычным образом; попытка открыть его откроет исполняемый файл. Можно даже ввести/proc/[pid]/exe, чтобы запустить другую копию того же исполняемого файла, который запускается процессом [pid]. Если путь не связан, символическая ссылка будет содержать строку '(удалено)', добавленную к исходному имени пути. В многопоточном процессе содержимое этой символической ссылки недоступно, если основной поток уже завершился.
+Содержимое:
+--------------------------------------------------------------------------------------------------
+/home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Символическая ссылка root: указывает на корень файловой системы, которой принадлежит процесс.
+Содержимое:
+--------------------------------------------------------------------------------------------------
+/
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Файл environ: список окружения процесса (исходная среда, которая была установлена при запуске выполняемой программы).
+Данный файл содержит исходное окружение, которое было установлено при запуске текущего процесса (вызове execve()). Если после вызова execve() окружение процесса будет модифицировано, этот файл не отразит внесенных изменений.
+Некоторые переменные окружения:
+LS_COLORS - используется для определения цветов, с которыми будут выведены имена файлов при вызове ls.
+LESSCLOSE, LESSOPEN – определяют пре- и пост- обработчики файла, который открывается при вызове less.
+XDG_MENU_PREFIX, XDG_VTNR, XDG_SESSION_ID, XDG_SESSION_TYPE, XDG_DATA_DIRS, XDG_SESSION_DESKTOP, XDG_CURRENT_DESKTOP, XDG_RUNTIME_DIR, XDG_CONFIG_DIRS, DESKTOP_SESSION – переменные, необходимые для вызова xdg-open, использующейся для открытия файла или URL в пользовательском приложении.
+LANG – язык и кодировка пользователя.
+DISPLAY – указывает приложениям, куда отобразить графический пользовательский интерфейс.
+GNOME_SHELL_SESSION_MODE, GNOME_TERMINAL_SCREEN, GNOME_DESKTOP_SESSION_ID, GNOME_TERMINAL_SERVICE, GJS_DEBUG_OUTPUT, GJS_DEBUG_TOPICS, GTK_MODULES, GTK_IM_MODULE, VTE_VERSION – переменные среды рабочего стола GNOME.
+COLORTERM – определяет поддержку 24-битного цвета.
+USER – имя пользователя, от чьего имени запущен процесс,
+USERNAME – имя пользователя, кто инициировал запуск процесса.
+SSH_AUTH_SOCK - путь к сокету, который агент использует для коммуникации с другими процессами.
+TEXTDOMAINDIR, TEXTDOMAIN – директория и имя объекта сообщения, получаемого при вызове gettext.
+PWD – путь к рабочей директории.
+HOME – путь к домашнему каталогу текущего пользователя.
+SSH_AGENT_PID - идентификатор процесса ssh-agent.
+TERM – тип запущенного терминала.
+SHELL – путь к предпочтительной оболочке командной строки.
+SHLVL – уровень текущей командной оболочки.
+LOGNAME – имя текущего пользователя.
+PATH - список каталогов, в которых система ищет исполняемые файлы.
+_ - полная командная строка процесса
+OLDPWD - путь к предыдущему рабочему каталогу.
+Содержимое:
+--------------------------------------------------------------------------------------------------
+DESKTOP_SESSION=mate
+XDG_SESSION_CLASS=user
+XDG_SESSION_TYPE=x11
+XAUTHORITY=/home/alex/.Xauthority
+GDMSESSION=mate
+SHELL=/bin/bash
+GDM_LANG=en_US
+VTE_VERSION=6003
+JOURNAL_STREAM=9:41261
+QT_AUTO_SCREEN_SCALE_FACTOR=0
+XDG_CONFIG_DIRS=/etc/xdg/xdg-mate:/etc/xdg
+GTK_OVERLAY_SCROLLING=0
+IM_CONFIG_PHASE=1
+XDG_DATA_DIRS=/usr/share/mate:/home/alex/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:/var/lib/snapd/desktop
+QT_SCALE_FACTOR=1
+_=/usr/bin/make
+MANAGERPID=1424
+LESSOPEN=| /usr/bin/lesspipe %s
+LC_NAME=ru_RU.UTF-8
+XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session0
+PATH=/home/alex/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-16-oracle/bin:/usr/lib/jvm/java-16-oracle/db/bin
+GPG_AGENT_INFO=/run/user/1000/gnupg/S.gpg-agent:0:1
+SESSION_MANAGER=local/alex-VivoBook-ASUSLaptop-X421IA-M433IA:@/tmp/.ICE-unix/1472,unix/alex-VivoBook-ASUSLaptop-X421IA-M433IA:/tmp/.ICE-unix/1472
+XDG_RUNTIME_DIR=/run/user/1000
+WINDOWID=73400326
+LC_NUMERIC=ru_RU.UTF-8
+INVOCATION_ID=e63265652f044055b85f1fa8ffb03046
+XDG_GREETER_DATA_DIR=/var/lib/lightdm-data/alex
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+XDG_SESSION_DESKTOP=mate
+SSH_AUTH_SOCK=/run/user/1000/keyring/ssh
+DISPLAY=:0
+HOME=/home/alex
+PWD=/home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01
+QT_QPA_PLATFORMTHEME=qt5ct
+XDG_SEAT=seat0
+SSH_AGENT_PID=1596
+GTK_MODULES=xapp-gtk3-module:gail:atk-bridge
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus,guid=0e2e90c876bc965c5ae56ae9623041db
+LESSCLOSE=/usr/bin/lesspipe %s %s
+J2REDIR=/usr/lib/jvm/java-16-oracle
+LOGNAME=alex
+J2SDKDIR=/usr/lib/jvm/java-16-oracle
+XDG_VTNR=7
+CLUTTER_BACKEND=x11
+COLORTERM=truecolor
+SHLVL=1
+JAVA_HOME=/usr/lib/jvm/java-16-oracle
+COMPIZ_CONFIG_PROFILE=mint
+XDG_SESSION_ID=c2
+USER=alex
+LC_MONETARY=ru_RU.UTF-8
+XDG_CURRENT_DESKTOP=MATE
+LC_TELEPHONE=ru_RU.UTF-8
+OLDPWD=/home/alex/tmp/BMSTU_6sem_operating_systems/lab_04
+LANGUAGE=en_US
+XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0
+MAKEFLAGS=
+MFLAGS=
+MAKE_TERMOUT=/dev/pts/1
+LC_PAPER=ru_RU.UTF-8
+QT_ACCESSIBILITY=1
+LC_MEASUREMENT=ru_RU.UTF-8
+DBUS_STARTER_BUS_TYPE=session
+MATE_DESKTOP_SESSION_ID=this-is-deprecated
+LC_IDENTIFICATION=ru_RU.UTF-8
+DERBY_HOME=/usr/lib/jvm/java-16-oracle/db
+MAKE_TERMERR=/dev/pts/1
+LC_ADDRESS=ru_RU.UTF-8
+LANG=en_US.UTF-8
+TERM=xterm-256color
+DBUS_STARTER_ADDRESS=unix:path=/run/user/1000/bus,guid=0e2e90c876bc965c5ae56ae9623041db
+MAKELEVEL=1
+
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Директория fd: cсылки на файлы, которые «открыл» процесс.
+Данная поддиректория содержит одну запись для каждого файла, который открыт процессом. Имя каждой такой записи соответствует номеру файлового дескриптора и является символьной ссылкой на реальный файл. Так, 0 - это стандартный ввод, 1 - стандартный вывод, 2 - стандартный вывод сообщений об ошибках и т. д.
+Для файловых дескрипторов сокетов и программных каналов записи будут являться символьными ссылками, содержащими тип файла с inode. Вызов readlink() для них вернет строку следующего формата: type:[inode].
+Для файловых дескрипторов, не имеющих соответствующего inode, символьная ссылка будет иметь следующий вид: anon_inode:<file-type>.
+Для мультипоточных процессов содержимое данной поддиректории может быть недоступно, если главный поток завершил свое выполнение.
+Программы, которые принимают имя файла в качестве аргумента командной строки, но не используют стандартный ввод, и программы, которые пишут в файл, но не используют стандартный вывод, могут использовать стандартный ввод и вывод в качестве аргументов командной строки с помощью файлов из /proc/[pid]/fd.
+Содержимое:
+--------------------------------------------------------------------------------------------------
+{0} -- /dev/pts/13/environ
+{1} -- /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/output.txt
+{2} -- /dev/pts/1/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/output.txt
+{3} -- /proc/23963/fd/BMSTU_6sem_operating_systems/lab_04/part_01/output.txt
+
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Файл io: cтатистическая информация о работе процесса с устройствами ввода-вывода.
+Содержимое:
+--------------------------------------------------------------------------------------------------
+rchar: 8254             (символы для чтения - количество байтов, которые этот процесс запрашивал считать из хранилища (сумма байтов, которые процесс запрашивал у read(2) и аналогичных системных вызовов))
+wchar: 12288            (символы для записи - количество байтов, которые этот процесс передал или должен передать для записи)
+syscr: 17               (количество системных вызовов чтения (read(2), pread(2) и т.д.))
+syscw: 3                (количество системных вызовов записи (write(2), pwrite(2) и т.д.))
+read_bytes: 0           (прочитанные байты - количество байтов, которые этот процесс действительно считал)
+write_bytes: 12288      (записанные байты - количество байтов, которые этот процесс действительно записал)
+cancelled_write_bytes: 0    (байты, отмененные на запись - (дело в усечении). Если процесс записывает 1 МБ в файл, а затем удаляет файл, он фактически не будет выполнять запись. Но это будет учтено как отправка 1 МБ для записи. Другими словами: это поле представляет количество байтов для записи, которые не были фактически записаны из-за усечения кэша. Процесс может привести к 'отрицательному' вводу-выводу. Если процесс усекает некоторый 'грязный' кэш страниц, некоторый ввод-вывод, который был учтен другой задачей (в ее write_bytes), не будет выполняться.)
+
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Файл stat: информация о процессе
+Содержимое:
+--------------------------------------------------------------------------------------------------
+23963                   (pid - ID процесса)
+(app.exe)               (comm - Имя файла)
+R                       (state - Состояние процесса)
+23954                   (ppid - ID родительского процесса)
+23954                   (pgrp - ID группы процесса)
+20194                   (session - ID сессии процесса)
+34817                   (tty_nr - управляющий терминал процесса)
+23954                   (tpgid - ID внешней группы процессов управляющего терминала)
+4194304                 (flags - Флаги ядра процесса)
+61                      (minflt - Количество минорных ошибок процесса (Минорные ошибки не включают ошибки загрузки страниц памяти с диска))
+0                       (cminflt - Количество минорных ошибок дочерних процессов (Минорные ошибки не включают ошибки загрузки страниц памяти с диска))
+0                       (majflt - Количество Мажорных ошибок процесса)
+0                       (cmajflt - Количество Мажорных ошибок дочерних процессов процесса)
+0                       (utime - Количество времени, в течение которого этот процесс исполнялся в пользовательском режиме)
+0                       (stime - Количество времени, в течение которого этот процесс исполнялся в режиме ядра)
+0                       (cutime - Количество времени, в течение которого дети этого процесса исполнялись в пользовательском режиме)
+0                       (cstime - Количество времени, в течение которого дети этого процесса были запланированы в режиме ядра)
+20                      (priority - Приоритет процесса)
+0                       (nice - уровень nice процесса, то есть пользовательский приоритет процесса (-20 - высокий, 19 - низкий))
+1                       (num_threads - Количество потоков)
+0                       (itrealvalue - Время в тиках до следующего SIGALRM отправленного в процесс из-за интервального таймера)
+2621854                 (starttime - Время, прошедшее с момента загрузки системы, когда процесс был запущен)
+2576384                 (vsize - Объем виртуальной памяти в байтах)
+131                     (rss - Resident Set (Memory) Size: Количество страниц процесса в физической памяти)
+18446744073709551615    (rsslim - Текущий предел в байтах для RSS процесса)
+94110081810432          (startcode - Адрес, над которым может работать текст программы)
+94110081826869          (endcode - Адрес, до которого может работать текст программы)
+140726438404896         (startstack - Адрес начала стека)
+0                       (kstkesp - Текущее значение ESP (Stack pointer))
+0                       (kstkeip - Текущее значение EIP (instruction pointer))
+0                       (pending - Битовая карта отложенных сигналов, отображаемое в виде десятичного числа)
+0                       (blocked - Битовая карта заблокированных сигналов, отображаемое в виде десятичного числа)
+0                       (sigign - Битовая карта игнорированных сигналов, отображаемое в виде десятичного числа)
+0                       (sigcatch - Битовая карта пойманных сигналов, отображаемое в виде десятичного числа)
+0                       (wchan - Адрес ядрёной функции, где процесс находится в состоянии сна)
+0                       (nswap - Количество страниц, поменявшихся местами)
+0                       (cnswap - Накопительный своп для дочерних процессов)
+17                      (exit_signal - Сигнал, который будет послан родителю, когда процесс будет завершен)
+3                       (processor - Номер процессора, на котором происходило последнее выполнение)
+0                       (rt_priority - Приоритет планирования в реальном времени - число в диапазоне от 1 до 99 для процессов, запланированных в соответствии с политикой реального времени)
+0                       (policy - Политика планирования)
+0                       (blkio_ticks - Общие блочные задержки ввода/вывода)
+0                       (gtime - Гостевое время процесса)
+0                       (cgtime - Гостевое время дочерних процессов)
+94110081858784          (start_data - Адрес, над которым размещаются инициализированные и неинициализированные данные программы (BSS))
+94110081860152          (end_data - Адрес, под которым размещаются инициализированные и неинициализированные данные программы (BSS))
+94110084292608          (start_brk - Адрес, выше которого куча программ может быть расширена с помощью brk (станавливает конец сегмента данных в значение, указанное в аргументе end_data_segment, когда это значение является приемлимым, система симулирует нехватку памяти и процесс не достигает своего максимально возможного размера сегмента данных))
+140726438408308         (arg_start - Адрес, над которым размещаются аргументы командной строки программы (argv))
+140726438408323         (arg_end - Адрес, под которым размещаются аргументы командной строки программы (argv))
+140726438408323         (env_start - Адрес, над которым размещена программная среда)
+140726438412270         (env_end - Адрес, под которым размещена программная среда)
+0
+                      (exit_code - Состояние выхода потока в форме, сообщаемой waitpid)
+
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Файл statm: информация об использовании памяти, измеренной в страницах
+Содержимое:
+--------------------------------------------------------------------------------------------------
+629                     (size - общее число страниц выделенное процессу в виртуальной памяти)
+131                     (resident - количество страниц, загруженных в физическую память)
+114                     (shared - количество общих резедентных страниц)
+5                       (trs - количество страниц кода)
+0                       (lrs - количество страниц библиотеки)
+78                      (drs - количество страниц данных/стека)
+0
+54                    (dt - dirty pages - данные для записи находятся в кэше страниц, но требуется к первоначальной записи на носитель)
+
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Файл maps: регионы виртуального адресного пространства, выделенные процессу.
+Девайсы идентифицируются старшим и младшим (major and minor) номерами устройств. Одно и то же устройство может иметь один и тот же major, но разные minor.
+    Начальный адрес участка памяти-конечный участок участка памяти
+    Права доступа(r - доступно для чтения, w - доступно для изменения, x - доступно для выполнения, s - разделяемый, p - private (copy on write))
+    смещение распределения
+    старший:младший номер устройства
+      inode
+Содержимое:
+--------------------------------------------------------------------------------------------------
+5597b5ff0000-5597b5ff2000 r--p 00000000 103:02 6297682                   /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff2000-5597b5ff5000 r-xp 00002000 103:02 6297682                   /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff5000-5597b5ffa000 r--p 00005000 103:02 6297682                   /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ffb000-5597b5ffc000 r--p 0000a000 103:02 6297682                   /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ffc000-5597b5ffd000 rw-p 0000b000 103:02 6297682                   /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b624e000-5597b626f000 rw-p 00000000 00:00 0                          [heap]
+7fd2246b4000-7fd2246d9000 r--p 00000000 103:02 9707248                   /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d9000-7fd224851000 r-xp 00025000 103:02 9707248                   /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224851000-7fd22489b000 r--p 0019d000 103:02 9707248                   /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489b000-7fd22489c000 ---p 001e7000 103:02 9707248                   /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489c000-7fd22489f000 r--p 001e7000 103:02 9707248                   /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489f000-7fd2248a2000 rw-p 001ea000 103:02 9707248                   /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2248a2000-7fd2248a8000 rw-p 00000000 00:00 0 
+7fd2248bc000-7fd2248bd000 r--p 00000000 103:02 9706978                   /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248bd000-7fd2248e0000 r-xp 00001000 103:02 9706978                   /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e0000-7fd2248e8000 r--p 00024000 103:02 9706978                   /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e9000-7fd2248ea000 r--p 0002c000 103:02 9706978                   /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248ea000-7fd2248eb000 rw-p 0002d000 103:02 9706978                   /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248eb000-7fd2248ec000 rw-p 00000000 00:00 0 
+7ffd6d5d3000-7ffd6d5f4000 rw-p 00000000 00:00 0                          [stack]
+7ffd6d5fc000-7ffd6d5ff000 r--p 00000000 00:00 0                          [vvar]
+7ffd6d5ff000-7ffd6d600000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]
+
+
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Файл pagemap: отображение каждой из виртуальных страниц процесса в фреймы физических страниц или область подкачки.
+addr pfn(page frame number) soft-dirty file/shared swapped present library
+Содержимое:
+
+--------------------------------------------------------------------------------------------------
+5597b5ff0000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff1000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff2000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff3000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff4000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff5000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff6000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff7000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff8000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ff9000 0 1 1 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ffb000 0 1 0 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b5ffc000 0 1 0 0 1 /home/alex/tmp/BMSTU_6sem_operating_systems/lab_04/part_01/app.exe
+5597b624e000 0 1 0 0 1 [heap]
+5597b624f000 0 1 0 0 1 [heap]
+5597b6250000 0 1 0 0 0 [heap]
+5597b6251000 0 1 0 0 0 [heap]
+5597b6252000 0 1 0 0 0 [heap]
+5597b6253000 0 1 0 0 0 [heap]
+5597b6254000 0 1 0 0 0 [heap]
+5597b6255000 0 1 0 0 0 [heap]
+5597b6256000 0 1 0 0 0 [heap]
+5597b6257000 0 1 0 0 1 [heap]
+5597b6258000 0 1 0 0 0 [heap]
+5597b6259000 0 1 0 0 0 [heap]
+5597b625a000 0 1 0 0 0 [heap]
+5597b625b000 0 1 0 0 0 [heap]
+5597b625c000 0 1 0 0 0 [heap]
+5597b625d000 0 1 0 0 0 [heap]
+5597b625e000 0 1 0 0 0 [heap]
+5597b625f000 0 1 0 0 0 [heap]
+5597b6260000 0 1 0 0 0 [heap]
+5597b6261000 0 1 0 0 0 [heap]
+5597b6262000 0 1 0 0 0 [heap]
+5597b6263000 0 1 0 0 0 [heap]
+5597b6264000 0 1 0 0 0 [heap]
+5597b6265000 0 1 0 0 0 [heap]
+5597b6266000 0 1 0 0 0 [heap]
+5597b6267000 0 1 0 0 0 [heap]
+5597b6268000 0 1 0 0 0 [heap]
+5597b6269000 0 1 0 0 0 [heap]
+5597b626a000 0 1 0 0 0 [heap]
+5597b626b000 0 1 0 0 0 [heap]
+5597b626c000 0 1 0 0 0 [heap]
+5597b626d000 0 1 0 0 0 [heap]
+5597b626e000 0 1 0 0 0 [heap]
+7fd2246b4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246b5000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246b6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246b7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246b8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246b9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ba000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246bb000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246bc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246bd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246be000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246bf000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246c9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ca000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246cb000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246cc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246cd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ce000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246cf000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246d9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246da000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246db000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246dc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246dd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246de000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246df000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246e9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ea000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246eb000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ec000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ed000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ee000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ef000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246f9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246fa000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246fb000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246fc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246fd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246fe000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2246ff000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224700000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224701000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224702000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224703000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224704000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224705000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224706000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224707000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224708000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224709000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22470a000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22470b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22470c000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22470d000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22470e000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22470f000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224710000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224711000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224712000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224713000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224714000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224715000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224716000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224717000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224718000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224719000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22471a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22471b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22471c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22471d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22471e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22471f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224720000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224721000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224722000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224723000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224724000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224725000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224726000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224727000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224728000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224729000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22472a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22472b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22472c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22472d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22472e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22472f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224730000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224731000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224732000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224733000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224734000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224735000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224736000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224737000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224738000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224739000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22473a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22473b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22473c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22473d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22473e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22473f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224740000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224741000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224742000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224743000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224744000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224745000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224746000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224747000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224748000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224749000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22474a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22474b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22474c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22474d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22474e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22474f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224750000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224751000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224752000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224753000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224754000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224755000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224756000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224757000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224758000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224759000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22475a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22475b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22475c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22475d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22475e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22475f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224760000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224761000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224762000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224763000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224764000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224765000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224766000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224767000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224768000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224769000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22476a000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22476b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22476c000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22476d000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22476e000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22476f000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224770000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224771000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224772000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224773000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224774000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224775000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224776000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224777000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224778000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224779000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22477a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22477b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22477c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22477d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22477e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22477f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224780000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224781000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224782000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224783000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224784000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224785000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224786000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224787000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224788000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224789000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22478a000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22478b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22478c000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22478d000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22478e000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22478f000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224790000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224791000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224792000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224793000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224794000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224795000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224796000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224797000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224798000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224799000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22479a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22479b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22479c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22479d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22479e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22479f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a0000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a1000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a2000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a3000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a4000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a5000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a6000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a7000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a8000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247a9000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247aa000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ab000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ac000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ad000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ae000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247af000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b0000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b1000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b2000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b3000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b4000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b5000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b6000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b7000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b8000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247b9000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ba000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247bb000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247bc000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247bd000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247be000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247bf000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247c9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ca000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247cb000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247cc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247cd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ce000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247cf000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247d9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247da000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247db000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247dc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247dd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247de000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247df000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e0000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e1000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e2000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e3000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e4000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e5000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e6000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e7000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e8000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247e9000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ea000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247eb000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ec000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ed000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ee000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ef000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f0000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f1000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f2000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f3000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f4000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f5000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f6000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f7000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f8000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247f9000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247fa000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247fb000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247fc000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247fd000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247fe000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2247ff000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224800000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224801000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224802000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224803000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224804000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224805000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224806000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224807000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224808000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224809000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22480a000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22480b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22480c000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22480d000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22480e000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22480f000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224810000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224811000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224812000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224813000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224814000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224815000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224816000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224817000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224818000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224819000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22481a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22481b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22481c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22481d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22481e000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22481f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224820000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224821000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224822000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224823000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224824000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224825000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224826000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224827000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224828000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224829000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22482a000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22482b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22482c000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22482d000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22482e000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22482f000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224830000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224831000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224832000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224833000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224834000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224835000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224836000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224837000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224838000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224839000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22483a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22483b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22483c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22483d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22483e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22483f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224840000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224841000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224842000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224843000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224844000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224845000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224846000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224847000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224848000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224849000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22484a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22484b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22484c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22484d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22484e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22484f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224850000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224851000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224852000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224853000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224854000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224855000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224856000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224857000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224858000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224859000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22485a000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22485b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22485c000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22485d000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22485e000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22485f000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224860000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224861000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224862000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224863000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224864000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224865000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224866000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224867000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224868000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224869000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22486a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22486b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22486c000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22486d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22486e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22486f000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224870000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224871000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224872000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224873000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224874000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224875000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224876000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224877000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224878000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224879000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22487a000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22487b000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22487c000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22487d000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22487e000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22487f000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224880000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224881000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224882000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224883000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224884000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224885000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224886000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224887000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224888000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224889000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22488a000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22488b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22488c000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22488d000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22488e000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22488f000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224890000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224891000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224892000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224893000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224894000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224895000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224896000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224897000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224898000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd224899000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489a000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489b000 0 1 0 0 0 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489c000 0 1 0 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489d000 0 1 0 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489e000 0 1 0 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd22489f000 0 1 0 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2248a0000 0 1 0 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2248a1000 0 1 0 0 1 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7fd2248a2000 0 1 0 0 1 
+7fd2248a3000 0 1 0 0 1 
+7fd2248a4000 0 1 0 0 1 
+7fd2248a5000 0 1 0 0 1 
+7fd2248a6000 0 1 0 0 1 
+7fd2248a7000 0 1 0 0 1 
+7fd2248bc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248bd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248be000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248bf000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248c9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248ca000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248cb000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248cc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248cd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248ce000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248cf000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d8000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248d9000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248da000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248db000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248dc000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248dd000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248de000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248df000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e0000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e1000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e2000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e3000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e4000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e5000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e6000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e7000 0 1 1 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248e9000 0 1 0 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248ea000 0 1 0 0 1 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7fd2248eb000 0 1 0 0 1 
+7ffd6d5d3000 0 0 0 0 0 [stack]
+7ffd6d5d4000 0 0 0 0 0 [stack]
+7ffd6d5d5000 0 0 0 0 0 [stack]
+7ffd6d5d6000 0 0 0 0 0 [stack]
+7ffd6d5d7000 0 0 0 0 0 [stack]
+7ffd6d5d8000 0 0 0 0 0 [stack]
+7ffd6d5d9000 0 0 0 0 0 [stack]
+7ffd6d5da000 0 0 0 0 0 [stack]
+7ffd6d5db000 0 0 0 0 0 [stack]
+7ffd6d5dc000 0 0 0 0 0 [stack]
+7ffd6d5dd000 0 0 0 0 0 [stack]
+7ffd6d5de000 0 0 0 0 0 [stack]
+7ffd6d5df000 0 0 0 0 0 [stack]
+7ffd6d5e0000 0 0 0 0 0 [stack]
+7ffd6d5e1000 0 0 0 0 0 [stack]
+7ffd6d5e2000 0 0 0 0 0 [stack]
+7ffd6d5e3000 0 0 0 0 0 [stack]
+7ffd6d5e4000 0 0 0 0 0 [stack]
+7ffd6d5e5000 0 0 0 0 0 [stack]
+7ffd6d5e6000 0 0 0 0 0 [stack]
+7ffd6d5e7000 0 0 0 0 0 [stack]
+7ffd6d5e8000 0 0 0 0 0 [stack]
+7ffd6d5e9000 0 0 0 0 0 [stack]
+7ffd6d5ea000 0 0 0 0 0 [stack]
+7ffd6d5eb000 0 1 0 0 1 [stack]
+7ffd6d5ec000 0 1 0 0 1 [stack]
+7ffd6d5ed000 0 1 0 0 1 [stack]
+7ffd6d5ee000 0 1 0 0 1 [stack]
+7ffd6d5ef000 0 1 0 0 1 [stack]
+7ffd6d5f0000 0 1 0 0 1 [stack]
+7ffd6d5f1000 0 1 0 0 1 [stack]
+7ffd6d5f2000 0 1 0 0 1 [stack]
+7ffd6d5f3000 0 1 0 0 1 [stack]
+7ffd6d5fc000 0 1 0 0 0 [vvar]
+7ffd6d5fd000 0 1 0 0 0 [vvar]
+7ffd6d5fe000 0 1 0 0 0 [vvar]
+7ffd6d5ff000 0 1 1 0 1 [vdso]
+
+--------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Общая информация о системе:
+
+
+Файл /proc/filesystems: Список файловых систем, которые были скомпилированы в ядро или модули ядра которого загружены в данный момент. Если файловая система помечена nodev, для нее не требуется монтировать блочное устройство (например, виртуальную файловую систему, сетевую файловую систему).
+Содержимое:
+
+--------------------------------------------------------------------------------------------------
+nodev	sysfs
+nodev	tmpfs
+nodev	bdev
+nodev	proc
+nodev	cgroup
+nodev	cgroup2
+nodev	cpuset
+nodev	devtmpfs
+nodev	configfs
+nodev	debugfs
+nodev	tracefs
+nodev	securityfs
+nodev	sockfs
+nodev	bpf
+nodev	pipefs
+nodev	ramfs
+nodev	hugetlbfs
+nodev	devpts
+	ext3
+	ext2
+	ext4
+	squashfs
+	vfat
+nodev	ecryptfs
+	fuseblk
+nodev	fuse
+nodev	fusectl
+nodev	efivarfs
+nodev	mqueue
+nodev	resctrl
+nodev	pstore
+	btrfs
+nodev	autofs
+
+
+--------------------------------------------------------------------------------------------------
