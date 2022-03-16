@@ -114,7 +114,7 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
             return -EFAULT;
         }
         
-        buf += len; //?
+        buf += len;
         read_index += len;
     }
 
