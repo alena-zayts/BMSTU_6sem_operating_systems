@@ -63,6 +63,22 @@ void printCWD()
     printf(CONTENT_SEPARATOR);
 }
 
+
+void printWCHAN()
+{
+    char pathToOpen[PATH_MAX];
+    snprintf(pathToOpen, PATH_MAX, "/proc/%d/wchan", PID);
+
+    char buf[BUFFSIZE] = {'\0'};
+
+    readlink(pathToOpen, buf, BUFFSIZE);
+    
+    printf("Символическая ссылка wchan: указывает на местоположению в  ядре, в котором процесс спит.\nСодержимое:");
+    printf(CONTENT_SEPARATOR);
+    printf("%s", buf);
+    printf(CONTENT_SEPARATOR);
+}
+
 void printENVIRON()
 {
     char pathToOpen[PATH_MAX];
@@ -233,6 +249,30 @@ void printMAPS()
     {
         printf(MAPS_DETAILED_INFO);
     }
+    printf("Содержимое:");
+    printf(CONTENT_SEPARATOR);
+
+    int lengthOfRead;
+    while ((lengthOfRead = fread(buf, 1, BUFFSIZE, file)))
+    {
+        buf[lengthOfRead] = '\0';
+        printf("%s\n", buf);
+    }
+    printf(CONTENT_SEPARATOR);
+    fclose(file);
+}
+
+
+void printSMAPS()
+{
+    char pathToOpen[PATH_MAX];
+    snprintf(pathToOpen, PATH_MAX, "/proc/%d/smaps", PID);
+
+    char buf[BUFFSIZE] = {'\0'};
+    FILE *file = fopen(pathToOpen, "r");
+    
+    printf("Файл smaps: потребление памяти для каждого mapping процесса.\n");
+
     printf("Содержимое:");
     printf(CONTENT_SEPARATOR);
 
@@ -474,8 +514,93 @@ void print_other_info()
     }
     printf(CONTENT_SEPARATOR);
     fclose(file);
-	
-	/proc/fs
+    
+
+    
+    
+    
+    printf("Директория proc/fs: подкаталоги, которые, в свою очередь, содержат файлы с информацией об (определенных) смонтированных файловых системах.\n");
+    printf("Содержимое:");
+    printf(CONTENT_SEPARATOR);
+    DIR *dir = opendir("/proc/fs");
+ 
+    struct dirent *readDir;
+    while ((readDir = readdir(dir)) != NULL)
+    {
+        if ((strcmp(readDir->d_name, ".") != 0) && (strcmp(readDir->d_name, "..") != 0))
+        {
+            printf("%s\n", readDir->d_name);
+        }
+    }
+    printf(CONTENT_SEPARATOR);
+    closedir(dir);
+    
+    
+    
+    
+    
+    printf("Файл /proc/interrupts: количество прерываний на процессор для каждого устройства ввода-вывода, а также прерывания, внутренние для системы (то есть не связанные с устройством как таковым), такие как NMI (немаскируемое прерывание), LOC (прерывание локального таймера), а для систем SMP - TLB (TLB прерывание сброса), RES (прерывание с перепланированием), CAL (прерывание удаленного вызова функции) и, возможно, другие.\n");
+    printf("Содержимое:");
+    printf(CONTENT_SEPARATOR);
+    
+    file = fopen("/proc/interrupts", "r");
+    while ((lengthOfRead = fread(buf, 1, BUFFSIZE, file)))
+    {
+        buf[lengthOfRead] = '\0';
+        printf("%s\n", buf);
+    }
+    printf(CONTENT_SEPARATOR);
+    fclose(file);
+    
+    
+    
+    
+    
+    
+    printf("Файл /proc/modules: перечень модулей, которые были загружены системой.\n");
+    printf("Содержимое:");
+    printf(CONTENT_SEPARATOR);
+    
+    file = fopen("/proc/modules", "r");
+    while ((lengthOfRead = fread(buf, 1, BUFFSIZE, file)))
+    {
+        buf[lengthOfRead] = '\0';
+        printf("%s\n", buf);
+    }
+    printf(CONTENT_SEPARATOR);
+    fclose(file);
+    
+    
+    
+    
+    printf("Файл /proc/ioports: список используемых в настоящее время зарегистрированных областей портов ввода-вывода (порт - адрес или диапазон адресов)\n");
+    printf("Содержимое:");
+    printf(CONTENT_SEPARATOR);
+    
+    file = fopen("/proc/ioports", "r");
+    while ((lengthOfRead = fread(buf, 1, BUFFSIZE, file)))
+    {
+        buf[lengthOfRead] = '\0';
+        printf("%s\n", buf);
+    }
+    printf(CONTENT_SEPARATOR);
+    fclose(file);
+    
+    
+    
+    
+    printf("Файл /proc/meminfo: статистические данные об использовании памяти в системе. Он используется free(1) для отображения объема свободной и используемой памяти (как физической, так и подкачки) в системе, а также общей памяти и буферов, используемых ядром. Каждая строка файла состоит из имени параметра, за которым следует двоеточие, значения параметра и единицы измерения параметра.\n");
+    printf("Содержимое:");
+    printf(CONTENT_SEPARATOR);
+    
+    file = fopen("/proc/meminfo", "r");
+    while ((lengthOfRead = fread(buf, 1, BUFFSIZE, file)))
+    {
+        buf[lengthOfRead] = '\0';
+        printf("%s\n", buf);
+    }
+    printf(CONTENT_SEPARATOR);
+    fclose(file);
 	
 }
 
@@ -541,6 +666,12 @@ int main(int argc, char *argv[])
     
     lines();
     printPAGEMAP();
+    
+    lines();
+    printSMAPS();
+    
+    lines();
+    printWCHAN();
 	
 	lines();
     print_other_info();

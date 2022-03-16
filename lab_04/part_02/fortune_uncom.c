@@ -18,14 +18,14 @@ MODULE_DESCRIPTION("Fortune Cookie Kernel Module");
 #define F_DIR_NAME "fortune_dir"
 
 
-static char *cookie_buf;                // буфер для строк
+static char *cookie_buf;
 static unsigned read_index;
 static unsigned write_index;
 
-// структура proc_dir_entry для файлов и поддиректорий файловой системы /proc
+
 static struct proc_dir_entry *proc_entry;
 
-char tmp[256];      // для sprintf
+char tmp[256];
 
 static ssize_t fortune_write(struct file *, const char __user *, size_t, loff_t *);
 static ssize_t fortune_read(struct file *, char __user *, size_t, loff_t *);
@@ -34,7 +34,7 @@ int fortune_release(struct inode *, struct file *);
 
 static struct proc_ops fops =
     {
-        // Для операций с файлом будут вызываться наши функции.
+
         proc_read: fortune_read,
         proc_write: fortune_write,
         proc_open: fortune_open,
@@ -53,8 +53,7 @@ int fortune_release(struct inode *sp_node, struct file *sp_file)
     return 0;
 }
 
-// buf - откуда (пространство пользователя)
-// возвращается количество символов, фактически записанных в файл
+
 static ssize_t fortune_write(struct file *file, const char __user *buf, size_t count, loff_t *data)
 {
     int space_available = (COOKIE_BUF_SIZE - write_index) + 1;
@@ -62,15 +61,14 @@ static ssize_t fortune_write(struct file *file, const char __user *buf, size_t c
     if (space_available < count)
     {
         printk(KERN_DEBUG "+ Ошибка : В буфере недостаточно места!");
-        return -ENOSPC; // передается пользовательскому процессу
+        return -ENOSPC;
     }
     
-    // куда (пространство ядра), откуда (пространоство пользователя), количество
-    // возвращает количество незаписанных символов.
+
     if (copy_from_user(&cookie_buf[write_index], buf, count))
     {
         printk(KERN_DEBUG "+ Ошибка : copy_from_user!");
-        return -EFAULT; // EFAULT - неправильный адрес.
+        return -EFAULT;
     }
 
     write_index += count;
@@ -80,8 +78,7 @@ static ssize_t fortune_write(struct file *file, const char __user *buf, size_t c
     return count;
 }
 
-// buf - куда (пространство пользователя)
-// возвращает количество считанных символов
+
 static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, loff_t *f_pos)
 {
     int len;
@@ -89,7 +86,7 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
     if (*f_pos > 0)
         return 0;
 
-    // Кольцевой буфер.
+
     if (read_index >= write_index)
         read_index = 0;
 
@@ -99,15 +96,7 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
     {
         len = sprintf(tmp, "%s\n", &cookie_buf[read_index]);
 
-        // можем использовать copy_to_user, поскольку объявляемый буфер уже находится в пространстве ядра,
-        // ?copy_to_user используем, потому что мы работаем в режиме пользователя
-        // Процессы в режиме пользователя имеют виртуальное адресное пространство.
-        // Там нет абсолютных адресов. Поэтому происходит преобразование виртуального
-        // адреса в физический (поддерживается аппаратно)
-        
-        // куда (пространство пользователя), откуда (пространоство ядра), количество
-        // возвращает количество количество байт, которые не могут быть скопированы
-        // copy_to_user(buf, tmp, len);
+
         if (copy_to_user(buf, tmp, len))
         {
             printk(KERN_DEBUG "+ Ошибка : copy_to_user!");
@@ -126,21 +115,19 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
 
 static int __init fortune_init(void)
 {
-    // vmalloc - выделить виртуальный непрерывный блок памяти.
+
     cookie_buf = (char *) vmalloc(COOKIE_BUF_SIZE);
 
     if (!cookie_buf)
     {
         printk(KERN_INFO "+ Ошибка. Недостаточно памяти для vmalloc!\n");
-        return -ENOMEM; // ENOMEM - недостаточно памяти.
+        return -ENOMEM;
     }
 
-    // Заполняем нулями выделенную область.
+
     memset(cookie_buf, 0, COOKIE_BUF_SIZE);
 
-    // Создаем файл в /proc/ на запись и чтение.
-    // имя файла, права доступа, место (NULL для корня /proc root), struct file_operations
-    // create_proc_entry не поддерживается
+
     proc_entry = proc_create(F_READ_WRITE_FILE_NAME, 0666, NULL, &fops);
     if (!proc_entry)
     {
@@ -155,7 +142,7 @@ static int __init fortune_init(void)
     write_index = 0;
 
     
-    // имя, место (NULL для корня /proc root)
+
     if (!proc_mkdir(F_DIR_NAME, NULL))
     {
         vfree(cookie_buf);
@@ -165,7 +152,7 @@ static int __init fortune_init(void)
     printk(KERN_INFO "+ : Создана директория " F_DIR_NAME "!\n");
     
     
-    // имя, место (NULL для корня /proc root), на что (на директорию)
+
     if (!proc_symlink(F_SYMLINK_NAME, NULL, "/proc/"F_DIR_NAME))
     {
         vfree(cookie_buf);
@@ -182,7 +169,7 @@ static int __init fortune_init(void)
 
 static void __exit fortune_exit(void)
 {
-    // имя, расположение
+
     remove_proc_entry(F_READ_WRITE_FILE_NAME, NULL);
     printk(KERN_INFO "+ : Удален файл " F_READ_WRITE_FILE_NAME "!\n");
     remove_proc_entry(F_DIR_NAME, NULL);
