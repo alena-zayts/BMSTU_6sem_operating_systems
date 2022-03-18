@@ -1,3 +1,12 @@
+//https://www.kernel.org/doc/Documentation/filesystems/seq_file.txt
+//https://lwn.net/Articles/22359/
+//https://www.kernel.org/doc/html/latest/filesystems/seq_file.html
+
+// различия: 
+// 		открытие (связывает fortune_show с файлом) и закрытие файла
+//		сама fortune_show: вместо copy_to_user(buf, tmp, len) испоьзуется seq_printf(m, "%s", tmp) (void)
+//						   нет     *f_pos += len; buf += len;
+
 #include <linux/module.h> 
 #include <linux/kernel.h> 
 #include <linux/init.h>  
@@ -32,52 +41,87 @@ static char tmp[256];
 Для фактического вывода чего-то интересного для пространства пользователя ядро вызывает метод show. 
 Этот метод должен создать вывод для элемента в последовательности, указанной итератором v. 
 Однако, он не должен использовать printk, вместо этого для вывода существует специальный набор функций seq_file:
-int seq_printf(struct seq_file *sfile, const char *fmt, ...);
-Это эквивалент printf для реализаций seq_file; он принимает обычную строку формата и дополнительные аргументы значений. 
-Однако, вы также должны передать ей структуру seq_file, которая передаётся в функцию show. 
-Если seq_printf возвращает ненулевое значение, это означает, что буфер заполнен и вывод будет отброшен.
+Most code will simply use seq_printf(), which works pretty much like
+printk(), but which requires the seq_file pointer as an argument.
 */
 
-int fortune_show(struct seq_file* m, void* v) {
+int fortune_show(struct seq_file* m, void* v) 
+{
     int len;
     if (!write_index)
         return 0;
-    /*if (read_index >= write_index)*/
-        /*read_index = 0;*/
+	
+	// Кольцевой буфер.
+    if (read_index >= write_index)
+        read_index = 0;
+	
     len = snprintf(tmp, COOKIE_BUF_SIZE, "%s", &cookie_buf[read_index]);
-    seq_printf(m, "%s", tmp);
-    read_index += len;
-    printk(KERN_INFO "+: show is called\n");
+	
+    
+	seq_printf(m, "%s", tmp); // void
+	
+    read_index += len + 1;
+	
+    printk(KERN_DEBUG "+ : Произведено чтение из файла\n");
+	//printk(KERN_DEBUG "+ : read_index = %d", read_index);
     return 0;
 }
 
-ssize_t fortune_write(struct file *filp, const char __user *buf, size_t len, loff_t *offp) {
-    if (len > COOKIE_BUF_SIZE - write_index + 1) {
-        printk(KERN_ERR "+: cookie_buf overflow error\n");
-        return -ENOSPC;
+
+// buf - откуда (пространство пользователя)
+// возвращается количество символов, фактически записанных в файл
+static ssize_t fortune_write(struct file *file, const char __user *buf, size_t count, loff_t *f_pos)
+{
+    int space_available = (COOKIE_BUF_SIZE - write_index) + 1;
+
+    if (space_available < count)
+    {
+        printk(KERN_DEBUG "+ Ошибка : В буфере недостаточно места!");
+        return -ENOSPC; // передается пользовательскому процессу
     }
-    if (copy_from_user(&cookie_buf[write_index], buf, len)) {
-        printk(KERN_ERR "+: copy_to_user error\n");
-        return -EFAULT;
+    
+    // куда (пространство ядра), откуда (пространоство пользователя), количество
+    // возвращает количество незаписанных символов.
+    if (copy_from_user(&cookie_buf[write_index], buf, count))
+    {
+        printk(KERN_DEBUG "+ Ошибка : copy_from_user!");
+        return -EFAULT; // EFAULT - неправильный адрес.
     }
-    printk(KERN_INFO "+: write is called\n");
-    write_index += len - 1;
-    cookie_buf[write_index] = '\0';
-    return len;
+
+    write_index += count;
+    cookie_buf[write_index - 1] = 0;
+
+    printk(KERN_DEBUG "+ : Произведена запись в файл");
+	// printk(KERN_DEBUG "+ : write_index = %d", write_index);
+    return count;
 }
 
-int fortune_open(struct inode *inode, struct file *file) {
-    printk(KERN_INFO "+: called open\n");
+int fortune_open(struct inode *inode, struct file *file) 
+{
+    printk(KERN_DEBUG "+ Вызван fortune_open\n");
     return single_open(file, fortune_show, NULL);
+	/* 
+	int single_open(struct file *file,
+	                int (*show)(struct seq_file *m, void *p),
+	                void *data);
+		если использовать seq_open, то потребуется 
+		static const struct seq_operations ct_seq_ops = {
+	        .start = ct_seq_start,
+	        .next  = ct_seq_next,
+	        .stop  = ct_seq_stop,
+	        .show  = ct_seq_show
+	};
+	*/
 }
 
-int fortune_release(struct inode *inode, struct file *file) {
-    printk(KERN_INFO "+: called release\n");
-    return single_release(inode, file);
+int fortune_release(struct inode *inode, struct file *file) 
+{
+    printk(KERN_DEBUG "+ Вызван fortune_release\n");
+    return single_release(inode, file); // так как использовали single_open
 }
 
 static struct file_operations fops = {
-    read: seq_read, 
+    read: seq_read, // стандартная,
     write: fortune_write, 
     open: fortune_open, 
     release: fortune_release
@@ -167,5 +211,36 @@ static void __exit fortune_exit(void)
     printk(KERN_INFO "+ : Модуль выгружен из ядра!\n");
 }
 
-module_init(fortune_init) 
-module_exit(fortune_exit)
+module_init(fortune_init);
+module_exit(fortune_exit);
+	
+	
+/*
+make
+sudo insmod seqfile.ko
+ 
+dmesg | grep "+ :"
+lsmod |grep seqfile
+ls /proc | grep seqfile
+echo "Msg1" > /proc/seqfile
+echo "Msg2" > /proc/seqfile
+echo "Msg3" > /proc/seqfile
+cat /proc/seqfile
+echo "Msg4" > /proc/seqfile
+cat /proc/seqfile
+ cat /proc/seqfile
+ cat /proc/seqfile
+ cat /proc/seqfile
+ dmesg | grep "+ :"
+ 
+ 
+ cat /proc/seqfile_symlink
+ 
+ 
+sudo rmmod seqfile.ko
+dmesg | grep "+ :"
+lsmod |grep seqfile
+ls /proc | grep seqfile
+
+ 
+ */
