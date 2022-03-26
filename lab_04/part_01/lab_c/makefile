@@ -28,7 +28,8 @@ OBJSUNIT := $(OUTPATH)check_insert.o $(OUTPATH)check_pop_front.o $(OUTPATH)check
 #сборка основной программы
 lab_c.exe : $(OBJS) $(OUTPATH)app.o
 	$(CC) $^ -o $@
-	
+run: lab_c.exe
+	./lab_c.exe func_tests/pos_02_in.txt func_tests/out.txt Added 10
 #сборка модульных тестов
 unit_tests.exe : $(OBJS) $(OBJSUNIT) $(OUTPATH)check_main.o 
 	$(CC) $^ -o $@ -lcheck

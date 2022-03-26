@@ -30,7 +30,7 @@ int main(int argc, char **argv)
         if (f)
         {
             head = task_list_read(f);
-            //fclose(f);
+            fclose(f);
             if (head)
             {
                 head = sort(head, my_comparator);
