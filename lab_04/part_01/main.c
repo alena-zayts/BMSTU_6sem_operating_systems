@@ -360,5 +360,9 @@ int main(int argc, char *argv[])
 //    lines();
 //    printPAGEMAP();
 
+//smaps
+
+//wchan
+
     return 0;
 }
