@@ -82,7 +82,7 @@ static ssize_t fortune_write(struct file *file, const char __user *buf, size_t c
     write_index += count;
     cookie_buf[write_index - 1] = 0;
 
-    printk(KERN_DEBUG "+ : Произведена запись в файл");
+    printk(KERN_DEBUG "+ : Произведена запись");
     return count;
 }
 
@@ -95,10 +95,9 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
 	if (!write_index)
         return 0;
 	
-	/* ?
-    if (*f_pos > 0)
-        return 0;
-	*/
+	// cycling
+    	if (*f_pos > 0)
+        	return 0;
 
     // Кольцевой буфер.
     if (read_index >= write_index)
@@ -106,12 +105,13 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
 
 	len = sprintf(tmp, "%s\n", &cookie_buf[read_index]);
 
-	// можем использовать copy_to_user, поскольку объявляемый буфер уже находится в пространстве ядра,
-	// ?copy_to_user используем, потому что мы работаем в режиме пользователя
+	
+	// copy_to_user используем, потому что мы работаем в режиме пользователя
 	// Процессы в режиме пользователя имеют виртуальное адресное пространство.
 	// Там нет абсолютных адресов. Поэтому происходит преобразование виртуального
 	// адреса в физический (поддерживается аппаратно)
-
+	// можем использовать copy_to_user, поскольку объявляемый буфер уже находится в пространстве ядра
+	
 	// куда (пространство пользователя), откуда (пространоство ядра), количество
 	// возвращает количество количество байт, которые не могут быть скопированы
 	// copy_to_user(buf, tmp, len);
@@ -127,7 +127,7 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
     *f_pos += len;
 	buf += len;
 
-    printk(KERN_DEBUG "+ : Произведено чтение из файла\n");
+    printk(KERN_DEBUG "+ : Произведено чтение\n");
     return len;
 }
 

@@ -62,7 +62,7 @@ int fortune_show(struct seq_file* m, void* v)
 	
     read_index += len + 1;
 	
-    printk(KERN_DEBUG "+ : Произведено чтение из файла\n");
+    printk(KERN_DEBUG "+ : Произведено чтение\n");
 	//printk(KERN_DEBUG "+ : read_index = %d", read_index);
     return 0;
 }
@@ -120,11 +120,14 @@ int fortune_release(struct inode *inode, struct file *file)
     return single_release(inode, file); // так как использовали single_open
 }
 
-static struct file_operations fops = {
-    read: seq_read, // стандартная,
-    write: fortune_write, 
-    open: fortune_open, 
-    release: fortune_release
+
+static struct proc_ops fops =
+    {
+        // Для операций с файлом будут вызываться наши функции.
+        proc_read: seq_read,
+        proc_write: fortune_write,
+        proc_open: fortune_open,
+        proc_release: fortune_release,
 };
 
 static void fortune_free(void) 
