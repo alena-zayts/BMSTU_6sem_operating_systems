@@ -49,13 +49,13 @@ static struct proc_ops fops =
 
 int fortune_open(struct inode *sp_inode, struct file *sp_file)
 {
-    printk(KERN_DEBUG "+ Вызван fortune_open\n");
+    printk(KERN_INFO "** open Вызван fortune_open\n");
     return 0;
 }
 
 int fortune_release(struct inode *sp_node, struct file *sp_file)
 {
-    printk(KERN_DEBUG "+ Вызван fortune_release\n");
+    printk(KERN_INFO "** release Вызван fortune_release\n");
     return 0;
 }
 
@@ -67,7 +67,7 @@ static ssize_t fortune_write(struct file *file, const char __user *buf, size_t c
 
     if (space_available < count)
     {
-        printk(KERN_DEBUG "+ Ошибка : В буфере недостаточно места!");
+        printk(KERN_INFO "** Ошибка : В буфере недостаточно места!");
         return -ENOSPC; // передается пользовательскому процессу
     }
     
@@ -75,14 +75,14 @@ static ssize_t fortune_write(struct file *file, const char __user *buf, size_t c
     // возвращает количество незаписанных символов.
     if (copy_from_user(&cookie_buf[write_index], buf, count))
     {
-        printk(KERN_DEBUG "+ Ошибка : copy_from_user!");
+        printk(KERN_INFO "** Ошибка : copy_from_user!");
         return -EFAULT; // EFAULT - неправильный адрес.
     }
 
     write_index += count;
     cookie_buf[write_index - 1] = 0;
 
-    printk(KERN_DEBUG "+ : Произведена запись");
+    printk(KERN_INFO "** write Произведена запись");
     return count;
 }
 
@@ -117,7 +117,7 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
 	// copy_to_user(buf, tmp, len);
 	if (copy_to_user(buf, tmp, len))
 	{
-		printk(KERN_DEBUG "+ Ошибка : copy_to_user!");
+		printk(KERN_INFO "** Ошибка : copy_to_user!");
 		return -EFAULT;
 	}
 
@@ -127,7 +127,7 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
     *f_pos += len;
 	buf += len;
 
-    printk(KERN_DEBUG "+ : Произведено чтение\n");
+    printk(KERN_INFO "** read Произведено чтение\n");
     return len;
 }
 
@@ -137,18 +137,18 @@ static void fortune_free(void)
     {
         // имя, расположение
         remove_proc_entry(F_SYMLINK_NAME, NULL);
-        printk(KERN_INFO "+ : Удалена символьная ссылка " F_SYMLINK_NAME "!\n");
+        printk(KERN_INFO "** Удалена символьная ссылка " F_SYMLINK_NAME "!\n");
     }
     
     if (fortune_file)
     {
             remove_proc_entry(F_READ_WRITE_FILE_NAME, NULL);
-            printk(KERN_INFO "+ : Удален файл " F_READ_WRITE_FILE_NAME "!\n");
+            printk(KERN_INFO "** Удален файл " F_READ_WRITE_FILE_NAME "!\n");
     }
     if (fortune_dir)
     {
         remove_proc_entry(F_DIR_NAME, NULL);
-        printk(KERN_INFO "+ : Удалена директория " F_DIR_NAME "!\n");
+        printk(KERN_INFO "** Удалена директория " F_DIR_NAME "!\n");
     }
     
     if (cookie_buf)
@@ -162,7 +162,7 @@ static int __init fortune_init(void)
 
     if (!cookie_buf)
     {
-        printk(KERN_INFO "+ Ошибка. Недостаточно памяти для vmalloc!\n");
+        printk(KERN_INFO "** Ошибка. Недостаточно памяти для vmalloc!\n");
         return -ENOMEM; 
     }
 
@@ -174,11 +174,11 @@ static int __init fortune_init(void)
     // create_proc_entry не поддерживается
     if (!(fortune_file = proc_create(F_READ_WRITE_FILE_NAME, 0666, NULL, &fops)))
     {
-        printk(KERN_INFO "+ : Ошибка: не удалось создать файл для чтения и записи в proc!\n");
+        printk(KERN_INFO "** Ошибка: не удалось создать файл для чтения и записи в proc!\n");
         fortune_free();
         return -ENOMEM;
     }
-    printk(KERN_INFO "+ : Создан файл " F_READ_WRITE_FILE_NAME "!\n");
+    printk(KERN_INFO "** Создан файл " F_READ_WRITE_FILE_NAME "!\n");
 
     read_index = 0;
     write_index = 0;
@@ -187,24 +187,24 @@ static int __init fortune_init(void)
     // имя, место (NULL для корня /proc root)
     if (!(fortune_dir = proc_mkdir(F_DIR_NAME, NULL)))
     {
-        printk(KERN_INFO "+ : Ошибка: не удалось создать директорию!\n");
+        printk(KERN_INFO "** Ошибка: не удалось создать директорию!\n");
         fortune_free();
         return -ENOMEM;
     }
-    printk(KERN_INFO "+ : Создана директория " F_DIR_NAME "!\n");
+    printk(KERN_INFO "** Создана директория " F_DIR_NAME "!\n");
     
     
     // имя, место (NULL для корня /proc root), на что (на директорию)
     if (!(fortune_symlink = proc_symlink(F_SYMLINK_NAME, NULL, "/proc/"F_DIR_NAME)))
     {
-        printk(KERN_INFO "+ : Ошибка: не удалось создать символьную ссылку!\n");
+        printk(KERN_INFO "** Ошибка: не удалось создать символьную ссылку!\n");
         fortune_free();
         return -ENOMEM;
     }
-    printk(KERN_INFO "+ : Создана символьная ссылка " F_SYMLINK_NAME "!\n");
+    printk(KERN_INFO "** Создана символьная ссылка " F_SYMLINK_NAME "!\n");
     
 
-    printk(KERN_INFO "+ : Модуль загружен в ядро!\n");
+    printk(KERN_INFO "** Модуль загружен в ядро!\n");
     
     return 0;
 }
@@ -212,7 +212,7 @@ static int __init fortune_init(void)
 static void __exit fortune_exit(void)
 {
     fortune_free();
-    printk(KERN_INFO "+ : Модуль выгружен из ядра!\n");
+    printk(KERN_INFO "** Модуль выгружен из ядра!\n");
 }
 
 module_init(fortune_init);
@@ -222,7 +222,7 @@ module_exit(fortune_exit);
 make
 sudo insmod fortune.ko
  
-dmesg | grep "+ :"
+dmesg | grep "**"
 lsmod |grep fortune
 ls /proc | grep fortune
 echo "Msg1" > /proc/fortune
@@ -234,14 +234,14 @@ cat /proc/fortune
  cat /proc/fortune
  cat /proc/fortune
  cat /proc/fortune
- dmesg | grep "+ :"
+ dmesg | grep "**"
  
  
  cat /proc/fortune_symlink
  
  
 sudo rmmod fortune.ko
-dmesg | grep "+ :"
+dmesg | grep "**"
 lsmod |grep fortune
 ls /proc | grep fortune
 
