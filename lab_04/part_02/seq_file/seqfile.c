@@ -62,8 +62,7 @@ int fortune_show(struct seq_file* m, void* v)
 	
     read_index += len + 1;
 	
-    printk(KERN_DEBUG "+ : Произведено чтение из файла\n");
-	//printk(KERN_DEBUG "+ : read_index = %d", read_index);
+    printk(KERN_INFO "** read Произведено чтение\n");
     return 0;
 }
 
@@ -76,7 +75,7 @@ static ssize_t fortune_write(struct file *file, const char __user *buf, size_t c
 
     if (space_available < count)
     {
-        printk(KERN_DEBUG "+ Ошибка : В буфере недостаточно места!");
+        printk(KERN_INFO "** Ошибка : В буфере недостаточно места!");
         return -ENOSPC; // передается пользовательскому процессу
     }
     
@@ -84,21 +83,20 @@ static ssize_t fortune_write(struct file *file, const char __user *buf, size_t c
     // возвращает количество незаписанных символов.
     if (copy_from_user(&cookie_buf[write_index], buf, count))
     {
-        printk(KERN_DEBUG "+ Ошибка : copy_from_user!");
+        printk(KERN_INFO "** Ошибка : copy_from_user!");
         return -EFAULT; // EFAULT - неправильный адрес.
     }
 
     write_index += count;
     cookie_buf[write_index - 1] = 0;
 
-    printk(KERN_DEBUG "+ : Произведена запись в файл");
-	// printk(KERN_DEBUG "+ : write_index = %d", write_index);
+    printk(KERN_INFO "** write Произведена запись в файл");
     return count;
 }
 
 int fortune_open(struct inode *inode, struct file *file) 
 {
-    printk(KERN_DEBUG "+ Вызван fortune_open\n");
+    printk(KERN_INFO "** open Вызван fortune_open\n");
     return single_open(file, fortune_show, NULL);
 	/* 
 	int single_open(struct file *file,
@@ -116,15 +114,18 @@ int fortune_open(struct inode *inode, struct file *file)
 
 int fortune_release(struct inode *inode, struct file *file) 
 {
-    printk(KERN_DEBUG "+ Вызван fortune_release\n");
+    printk(KERN_INFO "** release Вызван fortune_release\n");
     return single_release(inode, file); // так как использовали single_open
 }
 
-static struct file_operations fops = {
-    read: seq_read, // стандартная,
-    write: fortune_write, 
-    open: fortune_open, 
-    release: fortune_release
+
+static struct proc_ops fops =
+    {
+        // Для операций с файлом будут вызываться наши функции.
+        proc_read: seq_read,
+        proc_write: fortune_write,
+        proc_open: fortune_open,
+        proc_release: fortune_release,
 };
 
 static void fortune_free(void) 
@@ -133,18 +134,18 @@ static void fortune_free(void)
     {
         // имя, расположение
         remove_proc_entry(F_SYMLINK_NAME, NULL);
-        printk(KERN_INFO "+ : Удалена символьная ссылка " F_SYMLINK_NAME "!\n");
+        printk(KERN_INFO "** Удалена символьная ссылка " F_SYMLINK_NAME "!\n");
     }
     
     if (fortune_file)
     {
             remove_proc_entry(F_READ_WRITE_FILE_NAME, NULL);
-            printk(KERN_INFO "+ : Удален файл " F_READ_WRITE_FILE_NAME "!\n");
+            printk(KERN_INFO "** Удален файл " F_READ_WRITE_FILE_NAME "!\n");
     }
     if (fortune_dir)
     {
         remove_proc_entry(F_DIR_NAME, NULL);
-        printk(KERN_INFO "+ : Удалена директория " F_DIR_NAME "!\n");
+        printk(KERN_INFO "** Удалена директория " F_DIR_NAME "!\n");
     }
     
     if (cookie_buf)
@@ -158,7 +159,7 @@ static int __init fortune_init(void)
 
     if (!cookie_buf)
     {
-        printk(KERN_INFO "+ Ошибка. Недостаточно памяти для vmalloc!\n");
+        printk(KERN_INFO "** Ошибка. Недостаточно памяти для vmalloc!\n");
         return -ENOMEM; 
     }
 
@@ -170,11 +171,11 @@ static int __init fortune_init(void)
     // create_proc_entry не поддерживается
     if (!(fortune_file = proc_create(F_READ_WRITE_FILE_NAME, 0666, NULL, &fops)))
     {
-        printk(KERN_INFO "+ : Ошибка: не удалось создать файл для чтения и записи в proc!\n");
+        printk(KERN_INFO "** Ошибка: не удалось создать файл для чтения и записи в proc!\n");
         fortune_free();
         return -ENOMEM;
     }
-    printk(KERN_INFO "+ : Создан файл " F_READ_WRITE_FILE_NAME "!\n");
+    printk(KERN_INFO "** Создан файл " F_READ_WRITE_FILE_NAME "!\n");
 
 	write_index = 0;
     read_index = 0;
@@ -183,24 +184,24 @@ static int __init fortune_init(void)
     // имя, место (NULL для корня /proc root)
     if (!(fortune_dir = proc_mkdir(F_DIR_NAME, NULL)))
     {
-        printk(KERN_INFO "+ : Ошибка: не удалось создать директорию!\n");
+        printk(KERN_INFO "** Ошибка: не удалось создать директорию!\n");
         fortune_free();
         return -ENOMEM;
     }
-    printk(KERN_INFO "+ : Создана директория " F_DIR_NAME "!\n");
+    printk(KERN_INFO "** Создана директория " F_DIR_NAME "!\n");
     
     
     // имя, место (NULL для корня /proc root), на что (на директорию)
     if (!(fortune_symlink = proc_symlink(F_SYMLINK_NAME, NULL, "/proc/"F_DIR_NAME)))
     {
-        printk(KERN_INFO "+ : Ошибка: не удалось создать символьную ссылку!\n");
+        printk(KERN_INFO "** Ошибка: не удалось создать символьную ссылку!\n");
         fortune_free();
         return -ENOMEM;
     }
-    printk(KERN_INFO "+ : Создана символьная ссылка " F_SYMLINK_NAME "!\n");
+    printk(KERN_INFO "** Создана символьная ссылка " F_SYMLINK_NAME "!\n");
     
 
-    printk(KERN_INFO "+ : Модуль загружен в ядро!\n");
+    printk(KERN_INFO "** Модуль загружен в ядро!\n");
 	
     return 0;
 }
@@ -208,7 +209,7 @@ static int __init fortune_init(void)
 static void __exit fortune_exit(void) 
 {
     fortune_free();
-    printk(KERN_INFO "+ : Модуль выгружен из ядра!\n");
+    printk(KERN_INFO "** Модуль выгружен из ядра!\n");
 }
 
 module_init(fortune_init);
