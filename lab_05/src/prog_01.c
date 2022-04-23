@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 int main(void)
 {
@@ -31,6 +32,7 @@ int main(void)
             fprintf(stdout, "%c", c);
         }
     }
+    close(fd);
 
     return 0;
 }
