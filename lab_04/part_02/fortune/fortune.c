@@ -96,8 +96,8 @@ static ssize_t fortune_read(struct file *file, char __user *buf, size_t count, l
         return 0;
 	
 	// cycling
-    	if (*f_pos > 0)
-        	return 0;
+    if (*f_pos > 0)
+        return 0;
 
     // Кольцевой буфер.
     if (read_index >= write_index)
