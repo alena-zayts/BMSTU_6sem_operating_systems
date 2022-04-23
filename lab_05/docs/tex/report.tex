@@ -290,7 +290,7 @@ int main(void)
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.33]{img/prog_01_schema.jpg}
-	\caption{Схема структур, используемых в первой программе}
+	\caption{Созданные дескрипторы и связь между ними для первой программы}
 	\label{fig:prog_01_schema}
 \end{figure}
 
@@ -423,7 +423,7 @@ int main(void)
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{img/prog_02_schema.jpg}
-	\caption{Схема структур второй программы}
+	\caption{Созданные дескрипторы и связь между ними для второй программы}
 	\label{fig:prog_02_schema}
 \end{figure}
 
@@ -441,61 +441,60 @@ int main(void)
 
 \chapter{Третья программа}
 
-\textbf{На рис. \ref{fig:prog_03_schema} представлена схема структур, используемых в третьей программе.}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.32]{img/prog_03_schema.jpg}
-	\caption{Схема структур программы №2}
-	\label{fig:prog_03_schema}
-\end{figure}
-
-\begin{itemize}
-	\item Файл открывается на запись два раза, с помощью функции \texttt{fopen()};
-	\item функция \texttt{fprintf()} предоставляет буферизованный вывод - буфер создается без нашего вмешательства;g
-	\item изначально информация пишется в буфер, а из буфера в файл если произошло одно из событий:
-		\subitem буффер полон;
-		\subitem вызвана функция \texttt{fclose()};
-		\subitem вызвана функция \texttt{fflush()};
-	\item в случае нашей программы, информация в файл запишется в результате вызова функция \texttt{fclose()};
-	\item из-за того \texttt{f\_pos} независимы для каждого дескриптора файла, запись в файл будет производится с самого начала;
-	\item таким образом, информация записаная при первом вызове \texttt{fclose()} будет потеряна в результате второго вызова \texttt{fclose()} (см. рис. \ref{fig:prog_03}).
-	\item в многопоточной реализации результат аналогичен - с помощью \texttt{pthread\_join} мы дожидаемся вызова \texttt{fclose()} для \texttt{f2} в отдельном потоке и далее вызываем \texttt{fclose()} для \texttt{f1}.
-\end{itemize}
-
-\begin{lstlisting}[language=c, label=p3, caption=Программа №3]
+\begin{lstlisting}[language=c, label=p3, caption=Третья программа]
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
-#define OK 0
-#define FILE_NAME "data/out.txt"
-#define SPEC "%c"
+#include <sys/stat.h>
+
+#define FILENAME "outfile.txt"
+
+void print_file_info(char *message)
+{
+    struct stat statbuf;
+    printf("%s", message);
+    if (stat(FILENAME , &statbuf) == 0)
+    {
+        printf("st_ino: %ld\n", statbuf.st_ino);
+        printf("st_size: %ld\n", statbuf.st_size);
+        printf("st_blksize: %ld\n\n", statbuf.st_blksize);
+    }
+    else
+        printf("Error in stat\n\n");
+}
 
 int main()
 {
-	FILE *f1 = fopen(FILE_NAME, "w");
-	FILE *f2 = fopen(FILE_NAME, "w");
-	
-	for (char c = 'a'; c <= 'z'; c++)
-	{
-		if (c % 2)
-		{
-			fprintf(f1, SPEC, c);
-		}
-		else
-		{
-			fprintf(f2, SPEC, c);
-		}
-	}
-	
-	fclose(f2);
-	fclose(f1);
-	return OK;
+    print_file_info("Before first open\n");
+    FILE *f1 = fopen(FILENAME, "w");
+    print_file_info("After first open\n");
+    FILE *f2 = fopen(FILENAME, "w");
+    print_file_info("After second open\n");
+
+    for (char c = 'a'; c <= 'z'; c++)
+    {
+        if (c % 2)
+        {
+            fprintf(f1, "%c", c);
+        }
+        else
+        {
+            fprintf(f2, "%c", c);
+        }
+    }
+
+    print_file_info("Before first close\n");
+    fclose(f1);
+    print_file_info("After first close\n");
+    fclose(f2);
+    print_file_info("After second close\n");
+
+    return 0;
 }
+
 \end{lstlisting}
 
-""\newline
-\textbf{На рис. \ref{fig:prog_03} представлен результат работы третьей программы.}
 
 \begin{figure}[H]
 	\centering
@@ -504,49 +503,92 @@ int main()
 	\label{fig:prog_03}
 \end{figure}
 
-\begin{lstlisting}[language=c, label=p3thread, caption=Программа №3 (реализация с потоками)]
+Содержимое файла outfile.txt: bdfhjlnprtvxz
+
+Файл outfile.txt дважды открывается на запись с помощью функции open(). 
+С помощью функции fprintf() стандартной библиотеки stdio.h выполняется буферизованный вывод. Буфер создается без явного вмешательства. Информация сначала пишется в буфер, а из буфера информация переписывается в файл, если произошло одно из 3 событий:
+
+\begin{enumerate}
+	\item буфер заполнен;
+	\item вызвана функция fclose() (в данной программе именно эти события приводят к записи в файл);
+	\item вызвана функция fflush() (принудительная запись в файл).
+\end{enumerate}
+
+Так как f\_pos независимы для каждого дескриптора файла, запись в файл в каждом случае  в данной программе производится с его начала.
+
+Символы, имеющие четный код в таблице ASCII  (b, d, ...) записываются в буфер, который относится к структуре, на которую указывает f2, нечетный (a, c, ...) -- к f1. 
+
+Данные, которые были записаны после первого вызова fclose (для f1), были потеряны в результате второго вызова fclose (для f2), поэтому в файле outfile.txt записаны только символы bdfhjlnprtvxz (из буффера, относящегося к f2).
+
+Если поменять вызовы fclose для f1 и f2 местами, то результат будет противоположным: acegikmoqsuwy
+
+
+
+
+
+
+
+\begin{lstlisting}[language=c, label=p3thread, caption=Третья программа (реализация с потоками)]
 #include <stdio.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <unistd.h>
-#define OK 0
-#define FILE_NAME "data/out.txt"
-#define SPEC "%c"
+#include <sys/stat.h>
 
-void *run_buffer(void *args)
+#define FILENAME "outfile.txt"
+
+void print_file_info(char *message)
 {
-	FILE *f = (FILE *)args;
-	
-	for (char c = 'b'; c <= 'z'; c += 2)
-	{
-		fprintf(f, SPEC, c);
-	}
-	
-	fclose(f);
-	return NULL;
+    struct stat statbuf;
+    printf("%s", message);
+    if (stat(FILENAME , &statbuf) == 0)
+    {
+        printf("st_ino: %ld\n", statbuf.st_ino);
+        printf("st_size: %ld\n", statbuf.st_size);
+        printf("st_blksize: %ld\n\n", statbuf.st_blksize);
+    }
+    else
+        printf("Error in stat\n\n");
+}
+
+void *thread_func(void *args)
+{
+    FILE *f2 = fopen(FILENAME, "w");
+    print_file_info("After second open\n");
+
+    for (char c = 'b'; c <= 'z'; c += 2)
+    {
+        fprintf(f2, "%c", c);
+    }
+    print_file_info("Before first close\n");
+    fclose(f2);
+    print_file_info("After first close\n");
 }
 
 int main()
 {
-	FILE *f1 = fopen(FILE_NAME, "w");
-	FILE *f2 = fopen(FILE_NAME, "w");
-	
-	pthread_t thread;
-	int rc = pthread_create(&thread, NULL, run_buffer, (void *)(f2));
-	
-	for (char c = 'a'; c <= 'z'; c += 2)
-	{
-		fprintf(f1, SPEC, c);
-	}
-	
-	pthread_join(thread, NULL);
-	fclose(f1);
-	return OK;
+    print_file_info("Before first open\n");
+    FILE *f1 = fopen(FILENAME, "w");
+    print_file_info("After first open\n");
+    
+
+    pthread_t thread;
+    int rc = pthread_create(&thread, NULL, thread_func, NULL);
+
+    for (char c = 'a'; c <= 'z'; c += 2)
+    {
+        fprintf(f1, "%c", c);
+    }
+
+    pthread_join(thread, NULL);
+    fclose(f1);
+    print_file_info("After second close\n");
+
+
+    return 0;
 }
 \end{lstlisting}
 
-""\newline
-\textbf{На рис. \ref{fig:prog_03_thread} представлен результат работы второй программы (с потоками).}
 
 \begin{figure}[H]
 	\centering
@@ -554,6 +596,23 @@ int main()
 	\caption{Результат работы третьей программы (с потоками)}
 	\label{fig:prog_03_thread}
 \end{figure}
+
+Содержимое файла outfile.txt: acegikmoqsuwy
+
+В двупоточной реализации принцип дейтсвий аналогичен (в данном случае теряются данные, связанные с f2, так как для него fclose вызывается раньше, чем для f1).
+
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.32]{img/prog_03_schema.jpg}
+	\caption{Созданные дескрипторы и связь между ними для третьей программы}
+	\label{fig:prog_03_schema}
+\end{figure}
+
+
+
+
 
 \bibliographystyle{utf8gost705u}  % стилевой файл для оформления по ГОСТу
 \bibliography{51-biblio}          % имя библиографической базы (bib-файла)

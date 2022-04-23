@@ -2,41 +2,57 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
-#define OK 0
-#define FILE_NAME "data/out.txt"
-#define SPEC "%c"
+#define FILENAME "outfile.txt"
 
-void *run_buffer(void *args)
+void print_file_info(char *message)
 {
-    // fprintf(stdout, "\n============ IN RUN_BUFFER ==============");
-    FILE *f = (FILE *)args;
+    struct stat statbuf;
+    printf("%s", message);
+    if (stat(FILENAME , &statbuf) == 0)
+    {
+        printf("st_ino: %ld\n", statbuf.st_ino);
+        printf("st_size: %ld\n", statbuf.st_size);
+        printf("st_blksize: %ld\n\n", statbuf.st_blksize);
+    }
+    else
+        printf("Error in stat\n\n");
+}
+
+void *thread_func(void *args)
+{
+    FILE *f2 = fopen(FILENAME, "w");
+    print_file_info("After second open\n");
 
     for (char c = 'b'; c <= 'z'; c += 2)
     {
-        fprintf(f, SPEC, c);
+        fprintf(f2, "%c", c);
     }
-
-    fclose(f);
-    // fprintf(stdout, "\n======== LEAVE RUN_BUFFER ==========");
-    return NULL;
+    print_file_info("Before first close\n");
+    fclose(f2);
+    print_file_info("After first close\n");
 }
 
 int main()
 {
-    FILE *f1 = fopen(FILE_NAME, "w");
-    FILE *f2 = fopen(FILE_NAME, "w");
+    print_file_info("Before first open\n");
+    FILE *f1 = fopen(FILENAME, "w");
+    print_file_info("After first open\n");
+    
 
     pthread_t thread;
-    int rc = pthread_create(&thread, NULL, run_buffer, (void *)(f2));
+    int rc = pthread_create(&thread, NULL, thread_func, NULL);
 
     for (char c = 'a'; c <= 'z'; c += 2)
     {
-        fprintf(f1, SPEC, c);
+        fprintf(f1, "%c", c);
     }
 
     pthread_join(thread, NULL);
     fclose(f1);
+    print_file_info("After second close\n");
 
-    return OK;
+
+    return 0;
 }
