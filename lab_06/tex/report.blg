@@ -3,13 +3,13 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: report.aux
 Reallocating 'name_of_file' (item size: 1) to 13 items.
 I couldn't open style file utf8gost705u.bst
----line 45 of file report.aux
+---line 40 of file report.aux
  : \bibstyle{utf8gost705u
  :                       }
 I'm skipping whatever remains of this command
 Reallocating 'name_of_file' (item size: 1) to 10 items.
 I couldn't open database file 51-biblio.bib
----line 46 of file report.aux
+---line 41 of file report.aux
  : \bibdata{51-biblio
  :                   }
 I'm skipping whatever remains of this command

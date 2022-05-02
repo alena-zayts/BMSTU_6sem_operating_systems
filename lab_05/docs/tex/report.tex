@@ -203,6 +203,13 @@ struct _IO_FILE {
 	
 \chapter{Первая программа}
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{img/prog_01_schema.jpg}
+	\caption{Созданные дескрипторы и связь между ними для первой программы}
+	\label{fig:prog_01_schema}
+\end{figure}
+
 \begin{lstlisting}[language=c, label=p1, caption=Первая программа]
 #include <stdio.h>
 #include <fcntl.h>
@@ -221,6 +228,7 @@ int main(void)
     FILE *fs2 = fdopen(fd, "r");
     char buff2[20];
     setvbuf(fs2, buff2, _IOFBF, 20);
+
 
     int flag1 = 1, flag2 = 2;
     while (flag1 == 1 || flag2 == 1)
@@ -263,6 +271,7 @@ void *thread_func(void *args)
     int flag = 1;
     FILE *fs = (FILE *)args;
 
+
     while (flag == 1)
     {
         char c;
@@ -272,11 +281,9 @@ void *thread_func(void *args)
         }
     }
 }
-
 int main(void)
 {
     setbuf(stdout, NULL);
-
     pthread_t thread;
     int fd = open("alphabet.txt", O_RDONLY);
 
@@ -312,19 +319,14 @@ int main(void)
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.6]{img/prog_01_thread.png}
+	\includegraphics[scale=1]{img/prog_01_thread.png}
 	\caption{Результат работы первой программы (с потоками)}
 	\label{fig:prog_01_thread}
 \end{figure}
 
 
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.3]{img/prog_01_schema.jpg}
-	\caption{Созданные дескрипторы и связь между ними для первой программы}
-	\label{fig:prog_01_schema}
-\end{figure}
+
 
 Системный вызов open() создает новый файловый дескриптор для открытого только для чтения файла "alphabet.txt" (который содержит символы Abcdefghijklmnopqrstuvwxyz), создавая запись в системной таблице открытых файлов. Эта запись регистрирует смещение в файле и флаги состояния файла. Дескриптор файла является ссылкой на одну из этих записей. 
 
@@ -335,12 +337,20 @@ int main(void)
 При первом вызове fscanf()  (для fs1) буффер buff1 полностью заполнится первыми 20 символами. Значение f\_pos в структуре struct\_file открытого файла увеличится на 20. При следующем вызове fscanf() (для fs2) в buff2 считаются оставшиеся 6 символов, начиная с f\_pos (fs1 и fs2 ссылаются на один и тот же дескриптор fd).
 
 
-Затем в однопоточной программе в цикле поочередно выводятся символы из buff1 и buff2 (так как в buff2 записались лишь оставшиеся 6 символов, после 6 итерации цикла будут выводится символы только из buff1). В двупоточной программе же (в данном запуске) главный поток начал в цикле выводить символы из своего буффера, затем потерял квант,??
+Затем в однопоточной программе в цикле поочередно выводятся символы из buff1 и buff2 (так как в buff2 записались лишь оставшиеся 6 символов, после 6 итерации цикла будут выводится символы только из buff1). В двупоточной программе главный поток начинает вывод быстрее, так как для второго потока сначала затрачивается время на его создание, и только потом начинается вывод.
 
 
 
 
 \chapter{Вторая программа}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{img/prog_02_schema.jpg}
+	\caption{Созданные дескрипторы и связь между ними для второй программы}
+	\label{fig:prog_02_schema}
+\end{figure}
+
 
 \begin{lstlisting}[language=c, label=p2, caption=Вторая программа]
 #include <fcntl.h>
@@ -446,12 +456,6 @@ int main(void)
 \end{figure}
 
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.4]{img/prog_02_schema.jpg}
-	\caption{Созданные дескрипторы и связь между ними для второй программы}
-	\label{fig:prog_02_schema}
-\end{figure}
 
 
 Два системных вызова open() создают два новых файловых дескриптора для открытого только для чтения файла, создавая две записи в системной таблице открытых файлов. Каждая запись регистрирует смещение в файле и флаги состояния файла. 
@@ -466,6 +470,13 @@ int main(void)
 
 
 \chapter{Третья программа}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{img/prog_03_schema.jpg}
+	\caption{Созданные дескрипторы и связь между ними для третьей программы}
+	\label{fig:prog_03_schema}
+\end{figure}
 
 
 \begin{lstlisting}[language=c, label=p3, caption=Третья программа]
@@ -629,12 +640,6 @@ int main()
 
 
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.3]{img/prog_03_schema.jpg}
-	\caption{Созданные дескрипторы и связь между ними для третьей программы}
-	\label{fig:prog_03_schema}
-\end{figure}
 
 
 
