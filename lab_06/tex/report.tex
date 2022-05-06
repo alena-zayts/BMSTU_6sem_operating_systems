@@ -229,6 +229,47 @@ inline struct open_how build_open_how(int flags, umode_t mode)
 
 
 
+
+
+
+\section{$\texttt{build\_open\_flags()}$}
+
+\begin{lstlisting}[language=c, caption=Структура open_flags]
+
+struct open_flags {
+	int open_flag;
+	umode_t mode;
+	int acc_mode;
+	int intent;
+	int lookup_flags;
+};
+\end{lstlisting}
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.45]{img/build_open_flags.jpg}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{$\texttt{getname\_flags()}$}
 
 \begin{figure}[H]
