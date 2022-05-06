@@ -149,11 +149,79 @@
 	\includegraphics[scale=0.4]{img/open1.jpg}
 \end{figure}
 
+
+
+
+
+\section{$\texttt{build\_open\_how()}$}
+
+\begin{lstlisting}[language=c, caption=Структура open_how и функция build_open_how()]
+/*
+ * Arguments for how openat2(2) should open the target path. If only @flags and
+ * @mode are non-zero, then openat2(2) operates very similarly to openat(2).
+ *
+ * However, unlike openat(2), unknown or invalid bits in @flags result in
+ * -EINVAL rather than being silently ignored. @mode must be zero unless one of
+ * {O_CREAT, O_TMPFILE} are set.
+ *
+ * @flags: O_* flags.
+ * @mode: O_CREAT/O_TMPFILE file mode.
+ * @resolve: RESOLVE_* flags.
+ */
+struct open_how {
+	__u64 flags;
+	__u64 mode;
+	__u64 resolve;
+};
+
+
+/* List of all valid flags for the open/openat flags argument: */
+#define VALID_OPEN_FLAGS \
+	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
+	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
+	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
+	 
+#define S_IALLUGO	(S_ISUID|S_ISGID|S_ISVTX|S_IRWXUGO)
+
+#define WILL_CREATE(flags)	(flags & (O_CREAT | __O_TMPFILE))
+#define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC)
+
+inline struct open_how build_open_how(int flags, umode_t mode)
+{
+	struct open_how how = {
+		.flags = flags & VALID_OPEN_FLAGS,
+		.mode = mode & S_IALLUGO,
+	};
+
+	/* O_PATH beats everything else. */
+	if (how.flags & O_PATH)
+		how.flags &= O_PATH_FLAGS;
+	/* Modes should only be set for create-like flags. */
+	if (!WILL_CREATE(how.flags))
+		how.mode = 0;
+	return how;
+}
+\end{lstlisting}
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.45]{img/build_open_how.jpg}
+\end{figure}
+
+
+
+
+
+
+
+
+\section{$\texttt{do\_sys\_openat2()}$}
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.45]{img/open2.jpg}
 \end{figure}
-
 
 
 
