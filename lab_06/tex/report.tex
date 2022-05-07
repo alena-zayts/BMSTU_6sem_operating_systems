@@ -242,14 +242,14 @@ S\_ISVTX  0001000 закрепляющий бит
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.6]{img/open1.jpg}
+	\includegraphics[scale=0.6]{img/open.jpg}
 \end{figure}
 
 
 
 
 \clearpage
-\section{$\texttt{build\_open\_how()}$}
+\section{build\_open\_how()}
 
 \begin{lstlisting}[language=c, caption=Структура open\_how и функция build\_open\_how()]
 /*
@@ -305,34 +305,27 @@ inline struct open_how build_open_how(int flags, umode_t mode)
 
 
 
-\section{$\texttt{do\_sys\_openat2()}$}
+\section{do\_sys\_openat2()}
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.45]{img/open2.jpg}
+	\includegraphics[scale=0.4]{img/do_sys_openat2.jpg}
 \end{figure}
 
 
 
-
-
-
-
-
-
-
-\section{$\texttt{build\_open\_flags()}$}
+\clearpage
+\section{build\_open\_flags()}
 
 \begin{lstlisting}[language=c, caption=Структура open\_flags]
-
-struct open_flags {
-	int open_flag;
-	umode_t mode;
-	int acc_mode;
-	int intent;
-	int lookup_flags;
-};
+	
+	struct open_flags {
+		int open_flag;
+		umode_t mode;
+		int acc_mode;
+		int intent;
+		int lookup_flags;
+	};
 \end{lstlisting}
-
 
 \begin{figure}[H]
 	\centering
@@ -358,12 +351,11 @@ struct open_flags {
 
 
 
-\section{$\texttt{getname\_flags()}$}
+
+\section{getname\_flags()}
 
 \begin{lstlisting}[language=c, caption=Структуры audit\_names и filename]
-	
 struct audit_names;
-
 
 struct filename {
 	const char		*name;	/* pointer to actual string */
@@ -407,9 +399,7 @@ struct audit_names {
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.44]{img/getname_flags.jpg}
-	%\caption{Схема структур программы №1}
-	\label{fig:get_name_flags}
+	\includegraphics[scale=0.42]{img/getname_flags.jpg}
 \end{figure}
 
 
@@ -417,13 +407,11 @@ struct audit_names {
 
 
 
-\section{$\texttt{\_\_alloc\_fd}$}
+\section{alloc\_fd}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.6]{img/alloc_fd.jpg}
-	%\caption{Схема структур программы №1}
-	\label{fig:alloc_fd}
 \end{figure}
 
 
@@ -432,13 +420,22 @@ struct audit_names {
 
 
 
+\section{do\_filp\_open}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.45]{img/do_filp_open.jpg}
+	%\caption{Схема структур программы №1}
+	\label{fig:do_filp_open}
+\end{figure}
 
 
 
 
 
 
-\section{\texttt{do\_filp\_open}}
+
+\section{set\_nameidata() и resotre\_nameidata()}
 
 \begin{lstlisting}[language=c, caption=Структура nameidata]
 struct nameidata {
@@ -469,32 +466,50 @@ struct nameidata {
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.45]{img/do_filp_open.jpg}
-	%\caption{Схема структур программы №1}
-	\label{fig:do_filp_open}
+	\includegraphics[scale=0.55]{img/nameidata.jpg}
 \end{figure}
 
 
 
 
-\section{$\texttt{path\_openat}$}
+\section{path\_openat}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.39]{img/path_openat.jpg}
-	%\caption{Схема структур программы №1}
-	\label{fig:path_openat}
+	\includegraphics[scale=0.45]{img/path_openat.jpg}
 \end{figure}
 
 
 
-\section{$\texttt{lookup\_open}$}
+
+
+
+
+
+\section{open\_last\_lookups}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.45]{img/open_last_lookups.jpg}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{lookup\_open}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.45]{img/lookup_open.jpg}
-	%\caption{Схема структур программы №1}
-	\label{fig:lookup_open}
 \end{figure}
 
 
@@ -513,12 +528,6 @@ struct nameidata {
 
 
 
-% \section{Схема работы алгоритма функции $\texttt{build\_open\_flags}$}
-
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[scale=0.5]{img/build_open_flags.jpg}
-%\end{figure}
 
 
 
