@@ -22,9 +22,9 @@ void print_file_info(char *message)
 int main()
 {
     print_file_info("Before first open\n");
-    FILE *f1 = fopen(FILENAME, "w");
+    FILE *f1 = fopen(FILENAME, "a");
     print_file_info("After first open\n");
-    FILE *f2 = fopen(FILENAME, "w");
+    FILE *f2 = fopen(FILENAME, "a");
     print_file_info("After second open\n");
 
     for (char c = 'a'; c <= 'z'; c++)

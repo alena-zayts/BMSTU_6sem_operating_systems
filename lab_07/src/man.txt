@@ -1,0 +1,58 @@
+Загружаем модуль:
+sudo insmod myfs.ko
+
+Вместо реального диска для экспериментов будем использовать loop устройство.
+Это такой драйвер "диска", который пишет данные не на физическое устройство, а в файл (образ диска).
+Создадим образ диска, пока он не хранит никаких данных, поэтому все просто:
+touch image
+
+
+Создаем каталог, который будет точкой монтирования (корнем ФС) 
+mkdir dir
+
+Теперь, используя этот образ, примонтируем файловую систему:
+sudo mount -o loop -t myfs ./image ./dir
+
+
+
+
+Состояние slab после монтирования:
+sudo cat /proc/slabinfo | head -2 && sudo cat /proc/slabinfo| grep my_cache
+
+Информация о смонтированной ФС:
+cat /proc/filesystems | grep myfs
+mount | grep myfs
+
+Размонтировать ФС:
+sudo umount ./dir
+
+Просмотр лога:
+dmesg | grep MYFS
+ 
+
+Выгружаем модуль:
+sudo rmmod myfs - in use
+
+
+make
+sudo insmod myfs.ko
+touch image
+mkdir dir
+sudo mount -o loop -t myfs ./image ./dir
+mkdir dir2
+sudo mount -o loop -t myfs ./image ./dir2
+mkdir dir3
+sudo mount -o loop -t myfs ./image ./dir3
+
+cat /proc/filesystems | grep myfs
+mount | grep myfs
+dmesg | grep MYFS
+sudo cat /proc/slabinfo | head -2 && sudo cat /proc/slabinfo| grep my_cache
+
+
+sudo umount ./dir
+sudo rmmod myfs
+dmesg | grep MYFS
+
+make disclean
+

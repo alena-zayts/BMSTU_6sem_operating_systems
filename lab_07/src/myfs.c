@@ -17,26 +17,33 @@ struct myfs_inode {
     unsigned long i_ino;
 };
 
-static struct kmem_cache *inode_cache = NULL;
+
+static struct kmem_cache *my_inode_cache = NULL; //создание структуры кэша slab
 static struct myfs_inode **inode_pointers = NULL;
 static int cached_count = 0;
 
 static struct myfs_inode *cache_get_inode(void) 
 {
+    printk(KERN_DEBUG "MYFS: ! in cache_get_inode\n");
+
     if (cached_count == MAX_CACHE_SIZE)
     {
+        printk(KERN_DEBUG "MYFS: reached MAX_CACHE_SIZE\n");
         return NULL;
     }
 
-    return inode_pointers[cached_count++] = kmem_cache_alloc(inode_cache, GFP_KERNEL);
+    //После того, как кэш объектов создан, вы можете выделять объекты из него, вызывая функцию kmem_cache_alloc().
+    // Вызывающий код передает кэш, из которого выделяется объект, и набор флагов
+    return inode_pointers[cached_count++] = kmem_cache_alloc(my_inode_cache, GFP_KERNEL);
 }
 
 // вызывается в myfs_fill_sb (при монтировании), создает корневой каталог файловой системы.
 // аргумент mode задает разрешения на создаваемый файл и его тип (маска S_IFDIR говорит функции, что мы создаем каталог).
+
 static struct inode *myfs_make_inode(struct super_block *sb, int mode) 
 {
     struct inode *ret = new_inode(sb);
-    struct myfs_inode *inode_cache = NULL; //?
+    struct myfs_inode *my_inode_cache = NULL; //?
 
     if (ret) 
     {
@@ -46,13 +53,13 @@ static struct inode *myfs_make_inode(struct super_block *sb, int mode)
         ret->i_atime = ret->i_mtime = ret->i_ctime = current_time(ret);
 
         // ?
-        if ((inode_cache = cache_get_inode()) != NULL) 
+        if ((my_inode_cache = cache_get_inode()) != NULL) 
         {
-            inode_cache->i_mode = ret->i_mode;
-            inode_cache->i_ino = ret->i_ino;
+            my_inode_cache->i_mode = ret->i_mode;
+            my_inode_cache->i_ino = ret->i_ino;
         }
 
-        ret->i_private = inode_cache;
+        ret->i_private = my_inode_cache;
     }
 
     return ret;
@@ -67,6 +74,7 @@ static void myfs_put_super(struct super_block *sb)
 }
 
 // операции струткуры super_block (myfs_put_super и заглушки из libfs)
+//В поле put_super -- функция удаления суперблока, statfs -- получения информации о файле, drop_inode -- для удаления дисковой копии inode.
 static struct super_operations const myfs_super_ops = 
 {
       .put_super = myfs_put_super,
@@ -76,6 +84,7 @@ static struct super_operations const myfs_super_ops =
 
 // будет вызвана из myfs_mount -> mount_bdev, чтобы проинициализировать суперблок.
 // корневой каталог создает именно функция-параметр myfs_fill_sb()
+
 static int myfs_fill_sb(struct super_block *sb, void *data, int silent) 
 {
     // заполнение struct super_block
@@ -95,6 +104,7 @@ static int myfs_fill_sb(struct super_block *sb, void *data, int silent)
     }
 
     //Файловые и inode-операции, которые мы назначаем новому inode, взяты из libfs, т.е. предоставляются ядром.
+
     root->i_op = &simple_dir_inode_operations;
     root->i_fop = &simple_dir_operations;
 
@@ -149,14 +159,22 @@ static int __init myfs_init(void)
         return ret;
     }
 
-//?
     if ((inode_pointers = kmalloc(sizeof(struct myfs_inode *) * MAX_CACHE_SIZE, GFP_KERNEL)) == NULL)
     {
-        printk(KERN_ERR "MYFS: Failed to allocate memory\n");
+        printk(KERN_ERR "MYFS: Failed to allocate inode_pointers\n");
         return -ENOMEM;
     }
 
-    if ((inode_cache = kmem_cache_create(SLAB_NAME, sizeof(struct myfs_inode), 0, 0, NULL)) == NULL)
+    /* создания нового кэша. Обычно это происходит во время инициализации ядра или при первой загрузке модуля ядра.  
+        name — строка имени кэша;
+        size — размер элементов кэша (единый и общий для всех элементов);
+        offset — смещение первого элемента от начала кэша (для обеспечения соответствующего выравнивания по границам страниц, достаточно указать 0, что означает выравнивание по умолчанию);
+        flags — опциональные параметры (может быть 0);
+        ctor, dtor — конструктор и деструктор, соответственно, вызываются при размещении-освобождении каждого элемента, но с некоторыми ограничениями ... например, деструктор будет вызываться (финализация), но не гарантируется, что это будет поисходить сразу непосредственно после удаления объекта.
+        эта функция не выделяет память кешу. Вместо этого при попытке выделить объекты из кэша (изначально он пуст) ему выделяется память при помощи команды refill.
+        Это та же команда, которая используется для добавления кэшу памяти, когда все его объекты израсходованы.
+    */
+    if ((my_inode_cache = kmem_cache_create(SLAB_NAME, sizeof(struct myfs_inode), 0, 0, NULL)) == NULL)
     {
         kfree(inode_pointers);
         printk(KERN_ERR "MYFS: Failed to create cache\n");
@@ -173,10 +191,13 @@ static void __exit myfs_exit(void)
     int i;
     for (i = 0; i < cached_count; i++) 
     {
-        kmem_cache_free(inode_cache, inode_pointers[i]);
+        kmem_cache_free(my_inode_cache, inode_pointers[i]);
     }
 
-    kmem_cache_destroy(inode_cache);
+    // уничтожение слаба
+    // Операция уничтожения может быть успешна, только если уже все объекты,
+    // полученные из кэша, были возвращены в него.
+    kmem_cache_destroy(my_inode_cache); 
     kfree(inode_pointers);
 
     int ret = unregister_filesystem(&myfs_type);
