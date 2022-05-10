@@ -43,23 +43,23 @@ static struct myfs_inode *cache_get_inode(void)
 static struct inode *myfs_make_inode(struct super_block *sb, int mode) 
 {
     struct inode *ret = new_inode(sb);
-    struct myfs_inode *my_inode_cache = NULL; //?
+    struct myfs_inode *my_inode_cache = NULL; 
 
     if (ret) 
     {
-        inode_init_owner(&init_user_ns, ret, NULL, mode); //?
+        // init_user-ns - namespace
+        inode_init_owner(&init_user_ns, ret, NULL, mode);
 
         ret->i_size = PAGE_SIZE;
         ret->i_atime = ret->i_mtime = ret->i_ctime = current_time(ret);
 
-        // ?
         if ((my_inode_cache = cache_get_inode()) != NULL) 
         {
             my_inode_cache->i_mode = ret->i_mode;
             my_inode_cache->i_ino = ret->i_ino;
         }
 
-        ret->i_private = my_inode_cache;
+        ret->i_private = my_inode_cache; //?
     }
 
     return ret;
@@ -147,6 +147,10 @@ static struct file_system_type myfs_type = {
     .mount = myfs_mount, //будет вызвана при монтировании файловой системы, Когда делается запрос 
     .kill_sb = kill_anon_super, //при размонтировании. ?kill_block_super
 
+    /*
+    kill_block_super(), which unmounts a file system on a block device
+    kill_anon_super(), which unmounts a virtual file system (information is generated when requested)
+    */
 };
 
 static int __init myfs_init(void) 
