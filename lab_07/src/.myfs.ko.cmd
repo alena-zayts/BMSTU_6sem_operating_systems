@@ -1,0 +1,1 @@
+cmd_/media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/myfs.ko := ld -r  -m elf_x86_64  --build-id=sha1  -T scripts/module.lds -o /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/myfs.ko /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/myfs.o /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/myfs.mod.o;  true

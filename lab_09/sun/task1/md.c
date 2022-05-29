@@ -1,35 +1,12 @@
 #include <linux/module.h> // MODULE_LICENSE, MODULE_AUTHOR
 #include <linux/kernel.h> // KERN_INFO
-#include <linux/init.h>	  // ​Макросы __init и ​__exit
+#include <linux/init.h>	  // ​Макросы __init и ​__exit 
 #include <linux/init_task.h>
 #include <linux/interrupt.h>
 #include <linux/timex.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 
-// Посмотреть инф-ию о обработчике прерывания
-// cat /proc/interrupts | head -n 1 && cat /proc/interrupts| grep my_irq_handler
-// CPUi - число прерываний, полученных i-ым процессорным ядром.
-// TODO: В нашем случае при каждом нажатии клавиши увеличивается на 3, почему...?
-
-/*
-enum
-{
-	// Когда tasklet запланирован, ему выставляется состояние TASKLET_STATE_SCHED,
-	TASKLET_STATE_SCHED, 0
-	// TASKLET_STATE_RUN блокирует tasklet, что предотвращает исполнение одного и того же tasklet’а на разных CPU.
-	TASKLET_STATE_RUN	1
-};
-*/
-// TODO: А вот состояние 2 это какое...?
-// + флаги не совпадают...
-
-/*
-Обработчики прерываний делятся на быстрые и медленные.
-Быстрые выполняются от начала до конца.
-(В современных системах остался только один быстрый обработчик - от таймера).
-(Таймер ничего не вызывает, а только инициализирует отложенные вызовы).
-*/
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Alice");
@@ -43,22 +20,7 @@ struct proc_dir_entry *proc_file_entry;
 
 void my_tasklet_function(unsigned long data);
 
-/*
-struct tasklet_struct
-{
-	struct tasklet_struct *next;
-	unsigned long state;
-	atomic_t count;
-	void (*func)(unsigned long);
-	unsigned long data;
-};
 
-#define DECLARE_TASKLET(name, func, data) \
-struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(0), func, data }
-
-#define DECLARE_TASKLET_DISABLED(name, func, data) \
-struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
-*/
 
 // Статическое создание тасклета.
 // Создает экземпляр структуры struct tasklet_struct с именем my_tasklet и поле data инициализируется данными my_tasklet_data.
@@ -128,6 +90,7 @@ static const struct file_operations my_proc_fops =
 static int __init md_init(void)
 {
 	// регистрация обработчика прерывания
+
 	if (request_irq(
 			my_irq,						/* номер irq */
 			(irq_handler_t)irq_handler, /* наш обработчик */

@@ -1,0 +1,1 @@
+cmd_/media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/myfs.mod := { echo  /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/myfs.o;  echo; } > /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/myfs.mod
