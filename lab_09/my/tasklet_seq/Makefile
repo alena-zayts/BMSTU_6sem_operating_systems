@@ -16,7 +16,7 @@ clean:
 	@rm -rf .tmp_versions
 
 disclean: clean
-	@rm *.ko *.symvers *.mod
+	@rm *.ko *.symvers *.symvers *.mod
 endif 
 
 # sudo insmod my_tasklet.ko

@@ -9,14 +9,7 @@
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/sched.h>
-#include <linux/unistd.h>
-#include <linux/time.h>
-#include <linux/delay.h>
 
-#define MSG ">> my_tasklet8: "
-#define COLOR_START1 "\033[01;34m"
-#define COLOR_START2 "\033[01;32m"
-#define COLOR_END   "\x1B[0;37;40m"
 #define IRQ_NUM 1 // прерывание от клавиатуры
 
 MODULE_LICENSE("GPL");
@@ -40,21 +33,12 @@ void my_tasklet_function(unsigned long data)
      "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10",
      "NumLock", "ScrollLock", "Home", "Up", "Page-Up", "-", "Left",
      " ", "Right", "+", "End", "Down", "Page-Down", "Insert", "Delete"};
-
     if (code < 84) 
     {
-        printk(COLOR_START1 MSG "(func): keyboard=%s, state=%lu\n", ascii[code], my_tasklet->state);
-
-        printk(COLOR_START1 MSG "        go to sleep at %llu\n", ktime_get());
-        msleep(5000);
-        printk(COLOR_START1 MSG "        return at      %llu\n", ktime_get());
-    }
-    else
-    {
-        printk(COLOR_START2 MSG "(func): unknown code=%d\n", code);
+        printk(KERN_INFO ">> my_tasklet (function): keyboard %s\n", ascii[code]);
     }
 
-    //printk(MSG "(function): tasklet info -- data=%s, counter=%u, state=%lu\n", (char *)data, my_tasklet->count.counter, my_tasklet->state);
+    //printk(KERN_INFO ">> my_tasklet (function): data(given)=%s, counter=%u, state=%lu\n", (char *)data, my_tasklet->count.counter, my_tasklet->state);
 }
 
 
@@ -62,7 +46,7 @@ void my_tasklet_function(unsigned long data)
 
 irqreturn_t my_handler(int irq, void *dev) //устаревшее ,struct pt_regs *regs
 {
-    printk(MSG "(handler): \n");
+    printk(KERN_INFO ">> my_tasklet (handler): \n");
     if (irq == IRQ_NUM)
     {
         /*
@@ -72,16 +56,43 @@ irqreturn_t my_handler(int irq, void *dev) //устаревшее ,struct pt_reg
         После того, как тасклет был запланирован, он выполниться только один раз.
 		(тасклет всегда выполняется на том процессоре, который его запланировал на выполнение)
         */
-        printk(MSG "        info before scheduling: state=%lu, counter=%u\n", my_tasklet->state, my_tasklet->count.counter);
+        printk(KERN_INFO " state before scheduling = %lu, ", my_tasklet->state);
         tasklet_schedule(my_tasklet);
-        printk(MSG "        after:                  state=%lu, counter=%u\n", my_tasklet->state, my_tasklet->count.counter);
+        printk(KERN_INFO " after = %lu\n", my_tasklet->state);
         return IRQ_HANDLED; // прерывание обработано
     }
-    printk(MSG "irq wasn't handled\n");
+    printk(KERN_INFO "irq wasn't handled\n");
     return IRQ_NONE; // прерывание не обработано
 }
 
 
+
+
+int my_show(struct seq_file *filep, void *v)
+{
+    printk(KERN_INFO ">> my_tasklet: show called\n");
+    seq_printf(filep, "data=%s, counter=%u, state=%lu, use_callback=%d\n",
+            (char *)my_tasklet->data, my_tasklet->count.counter, my_tasklet->state, my_tasklet->use_callback);
+    return 0;
+}
+
+int my_open(struct inode *inode, struct file *file)
+{
+    printk(KERN_INFO ">> my_tasklet: open called\n");
+    return single_open(file, my_show, NULL);
+}
+
+int my_release(struct inode *inode, struct file *file)
+{
+    printk(KERN_INFO ">> my_tasklet: release called\n");
+    return single_release(inode, file); // тк используем single_open 
+}
+
+static struct proc_ops fops = {
+    proc_read : seq_read,
+    proc_open : my_open,
+    proc_release : my_release
+};
 
 static int __init my_init(void)
 {
@@ -90,7 +101,7 @@ static int __init my_init(void)
     my_tasklet = kmalloc(sizeof(struct tasklet_struct), GFP_KERNEL); //Allocate normal kernel ram. May sleep.
     if (!my_tasklet)
     {
-        printk(MSG "ERROR kmalloc!\n");
+        printk(KERN_INFO ">> my_tasklet: error kmalloc!\n");
         return -1;
     }
 
@@ -110,15 +121,15 @@ static int __init my_init(void)
     */
     tasklet_init(my_tasklet, my_tasklet_function, (unsigned long)my_tasklet_data);
 
-
+    if (!proc_create("tasklet_proc_file", 0666, NULL, &fops)) //какие права?
+    {
+        printk(KERN_INFO ">> my_tasklet: error proc_create!\n");
+        return -1;
+    }
 
     /*
     регистрация обработчика аппаратного прерывания и разрешение определенной линии irq
-
-    IRQF_SHARED 0x00000080 – устанавливается абонентами  (теми,  кто вызывает), чтобы разрешить разделение линии IRQ раными устройствами.
-    (ДРАЙВЕР управляет устройством – разные драйвера устройсств мб заинтересованы в использовании одной и той же линии IRQ).
-    Одно устройство может иметь несколько обработчиков прерываний
-
+    IRQF_SHARED разрешает разделение irq несколькими устройствами
     4 параметр devname - имя устройства (можно потом посмотреть в /proc/interrupts)
     5 параметр dev_id – используется прежде всего для разделения (shared) линии прерывания
         Данные по указателю dev требуются для удаления только конкретного устройства.
@@ -128,21 +139,22 @@ static int __init my_init(void)
 
     if (request_irq(IRQ_NUM, my_handler, IRQF_SHARED, "my_dev_name", &my_handler))
     {
-        printk(MSG "ERROR request_irq\n");
+        printk(KERN_ERR ">> my_tasklet: error request_irq\n");
         return -1;
     }
-    printk(MSG "module loaded\n");
+    printk(KERN_INFO ">> my_tasklet: module loaded\n");
     return 0;
 }
 
 static void __exit my_exit(void)
 {
-    //ждет завершения тасклета и удаляет тасклет из очереди на выполнение только в контексте процесса. 
+    //ждет завершения тасклета и удаляет тасклет из очереди на выполнение только в контексте процесса.
     tasklet_kill(my_tasklet);
     kfree(my_tasklet);
-    //освободит линию irq от указанного обработчика.  
+    //освободит линию irq от указанного обработчика. 
     free_irq(IRQ_NUM, &my_handler);
-    printk(MSG "module unloaded\n");
+    remove_proc_entry("tasklet_proc_file", NULL);
+    printk(KERN_INFO ">> my_tasklet: module unloaded\n");
 }
 
 module_init(my_init) 
@@ -155,8 +167,8 @@ struct tasklet_struct
     unsigned long state;          состояние тасклета
                                     Enum
                                     {
-	                                (0)TASKLET_STATE_SCHED, - запланирован
-	                                (1)TASKLET_STATE_RUN - выполняется, блокирует tasklet, что предотвращает исполнение одного и того же tasklet’а на разных CPU.
+	                                TASKLET_STATE_SCHED, - запланирован
+	                                TASKLET_STATE_RUN - выполняется
                                      }
 
     atomic_t count;               счетчик ссылок. если не равен нулю, то тасклет запрещён и не может выполняться
@@ -171,28 +183,39 @@ struct tasklet_struct
 // Посмотреть инф-ию о обработчике прерывания
 // cat /proc/interrupts | head -n 1 && cat /proc/interrupts| grep my_dev_name
 // CPUi - число прерываний, полученных i-ым процессорным ядром.
-
 // TODO: В нашем случае при каждом нажатии клавиши увеличивается на 3, почему...?
+
+/*
+enum
+{
+	// Когда tasklet запланирован, ему выставляется состояние TASKLET_STATE_SCHED,
+	TASKLET_STATE_SCHED, 0
+	// TASKLET_STATE_RUN блокирует tasklet, что предотвращает исполнение одного и того же tasklet’а на разных CPU.
+	TASKLET_STATE_RUN	1
+};
+
+*/
 // TODO: А вот состояние 2 это какое...?
 // + флаги не совпадают...
 
 
 
-
-
 /*
-Void synchronize_irq(unsigned int irq); - предназначена для ожидания завершения обработчика прерывания по линии irq, если он выполняется. 
+Обработчики прерываний делятся на быстрые и медленные.
+Быстрые выполняются от начала до конца.
+(В современных системах остался только один быстрый обработчик - от таймера).
+(Таймер ничего не вызывает, а только инициализирует отложенные вызовы).
 */
 
 
 /*
-sudo rmmod my_tasklet.ko
-make disclean
 make
 sudo insmod my_tasklet.ko
 lsmod | grep my_tasklet
+cat /proc/tasklet_proc_file
 sudo dmesg | grep my_tasklet
 cat /proc/interrupts | head -n 1 && cat /proc/interrupts| grep my_dev_name
 
-
+sudo rmmod my_tasklet.ko
+make disclean
 */
