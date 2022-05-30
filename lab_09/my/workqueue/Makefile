@@ -1,5 +1,5 @@
 ifneq ($(KERNELRELEASE),)
-	obj-m := yakubaWorkqueue.o
+	obj-m := my_workqueue.o
 else
 	CURRENT = $(shell uname -r)
 	KDIR = /lib/modules/$(CURRENT)/build
