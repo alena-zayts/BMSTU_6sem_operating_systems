@@ -13,7 +13,7 @@
 #include <linux/time.h>
 #include <linux/delay.h>
 
-#define MSG ">> my_tasklet8: "
+#define MSG ">> my_tasklet11: "
 #define COLOR_START1 "\033[01;34m"
 #define COLOR_START2 "\033[01;32m"
 #define COLOR_END   "\x1B[0;37;40m"
@@ -30,7 +30,7 @@ void my_tasklet_function(unsigned long data)
 {
     // получение кода нажатой клавиши клавиатуры
 
-    int code = inb(0x60);
+    int code = inb(0x60); //https://dvsav.ru/at-ps2-keyboard/
     char * ascii[84] = 
     {" ", "Esc", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "+", "Backspace", 
      "Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "Enter", "Ctrl",
@@ -43,16 +43,18 @@ void my_tasklet_function(unsigned long data)
 
     if (code < 84) 
     {
-        printk(COLOR_START1 MSG "(func): keyboard=%s, state=%lu\n", ascii[code], my_tasklet->state);
+        printk(COLOR_START1 MSG "           (func): keyboard=%s, state=%lu\n", ascii[code], my_tasklet->state);
 
-        printk(COLOR_START1 MSG "        go to sleep at %llu\n", ktime_get());
-        msleep(5000);
-        printk(COLOR_START1 MSG "        return at      %llu\n", ktime_get());
+
     }
     else
     {
-        printk(COLOR_START2 MSG "(func): unknown code=%d\n", code);
+        printk(COLOR_START2 MSG "           (func): unknown code=%d\n", code);
     }
+
+    printk(COLOR_START1 MSG "               go to sleep at %llu\n", ktime_get());
+    mdelay(1000);
+    printk(COLOR_START1 MSG "               return at      %llu\n", ktime_get());
 
     //printk(MSG "(function): tasklet info -- data=%s, counter=%u, state=%lu\n", (char *)data, my_tasklet->count.counter, my_tasklet->state);
 }
@@ -62,7 +64,7 @@ void my_tasklet_function(unsigned long data)
 
 irqreturn_t my_handler(int irq, void *dev) //устаревшее ,struct pt_regs *regs
 {
-    printk(MSG "(handler): \n");
+    printk(MSG "(handler) (time=%llu): \n", ktime_get());
     if (irq == IRQ_NUM)
     {
         /*
@@ -72,9 +74,9 @@ irqreturn_t my_handler(int irq, void *dev) //устаревшее ,struct pt_reg
         После того, как тасклет был запланирован, он выполниться только один раз.
 		(тасклет всегда выполняется на том процессоре, который его запланировал на выполнение)
         */
-        printk(MSG "        info before scheduling: state=%lu, counter=%u\n", my_tasklet->state, my_tasklet->count.counter);
+        printk(MSG "info before scheduling: state=%lu, counter=%u\n", my_tasklet->state, my_tasklet->count.counter);
         tasklet_schedule(my_tasklet);
-        printk(MSG "        after:                  state=%lu, counter=%u\n", my_tasklet->state, my_tasklet->count.counter);
+        printk(MSG "after:                  state=%lu, counter=%u\n", my_tasklet->state, my_tasklet->count.counter);
         return IRQ_HANDLED; // прерывание обработано
     }
     printk(MSG "irq wasn't handled\n");
