@@ -13,7 +13,11 @@
 #include <linux/time.h>
 #include <linux/delay.h>
 
-#define MSG ">> my_tasklet11: "
+#define MSG ">> my_tasklet2: "
+#define MY_TAB "" //"        "
+#define WITH_SLEEP false
+#define ERR_KLAV false
+
 #define COLOR_START1 "\033[01;34m"
 #define COLOR_START2 "\033[01;32m"
 #define COLOR_END   "\x1B[0;37;40m"
@@ -28,8 +32,6 @@ struct tasklet_struct* my_tasklet;
 
 void my_tasklet_function(unsigned long data)
 {
-    // получение кода нажатой клавиши клавиатуры
-
     int code = inb(0x60); //https://dvsav.ru/at-ps2-keyboard/
     char * ascii[84] = 
     {" ", "Esc", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "+", "Backspace", 
@@ -43,20 +45,22 @@ void my_tasklet_function(unsigned long data)
 
     if (code < 84) 
     {
-        printk(COLOR_START1 MSG "           (func): keyboard=%s, state=%lu\n", ascii[code], my_tasklet->state);
+        printk(COLOR_START1 MSG MY_TAB "(func): keyboard=%s, state=%lu\n", ascii[code], my_tasklet->state);
 
 
     }
-    else
+    else if (ERR_KLAV)
     {
-        printk(COLOR_START2 MSG "           (func): unknown code=%d\n", code);
+        printk(COLOR_START2 MSG MY_TAB "(func): unknown code=%d\n", code);
     }
 
-    printk(COLOR_START1 MSG "               go to sleep at %llu\n", ktime_get());
-    mdelay(1000);
-    printk(COLOR_START1 MSG "               return at      %llu\n", ktime_get());
+    if (WITH_SLEEP)
+    {
+        printk(COLOR_START1 MSG MY_TAB "go to sleep at %llu\n", ktime_get());
+        mdelay(1000);
+        printk(COLOR_START1 MSG MY_TAB "return at      %llu\n", ktime_get());
+    }
 
-    //printk(MSG "(function): tasklet info -- data=%s, counter=%u, state=%lu\n", (char *)data, my_tasklet->count.counter, my_tasklet->state);
 }
 
 
@@ -151,6 +155,21 @@ module_init(my_init)
 module_exit(my_exit)
 
 /*
+sudo rmmod my_tasklet.ko
+make disclean
+make
+sudo insmod my_tasklet.ko
+lsmod | grep my_tasklet
+sudo dmesg | grep my_tasklet
+cat /proc/interrupts | head -n 1 && cat /proc/interrupts| grep my_dev_name
+*/
+
+
+
+
+
+
+/*
 struct tasklet_struct
  {
     struct tasklet_struct *next;   указатель на следующий тасклет в     списке 
@@ -187,14 +206,3 @@ Void synchronize_irq(unsigned int irq); - предназначена для ож
 */
 
 
-/*
-sudo rmmod my_tasklet.ko
-make disclean
-make
-sudo insmod my_tasklet.ko
-lsmod | grep my_tasklet
-sudo dmesg | grep my_tasklet
-cat /proc/interrupts | head -n 1 && cat /proc/interrupts| grep my_dev_name
-
-
-*/

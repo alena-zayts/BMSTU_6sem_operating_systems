@@ -9,13 +9,16 @@
 #include <linux/unistd.h>
 #include <linux/time.h>
 #include <asm/io.h>
+#include <cpuid.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("ALENA");
 
 #define IRQ_NUM 1
 
-#define MSG ">> my_workqueue3: "
+#define MSG ">> my_workqueue6: "
+#define MY_TAB "" //"        "
+#define ERR_KLAV false
 
 #define COLOR_START1 "\033[01;34m"
 #define COLOR_START2 "\033[01;32m"
@@ -42,20 +45,22 @@ void my_work_func1(struct work_struct *work)
 
     if (code < 84) 
     {
-        printk(COLOR_START1 MSG "           (func1): keyboard=%s\n", ascii[code]);
+        printk(COLOR_START1 MSG MY_TAB "(func1): keyboard=%s\n", ascii[code]);
     }
-    else
+    else if (ERR_KLAV)
     {
-        printk(COLOR_START1 MSG "           (func1): unknown code=%d\n", code);
+        printk(COLOR_START1 MSG MY_TAB "(func1): unknown code=%d\n", code);
     }
 }
 
 void my_work_func2(struct work_struct *work)
 {
-    printk(COLOR_START2 MSG "           (func2): go to sleep at %llu\n", ktime_get());
+    //unsigned a, b, c, d;
+    //printk(COLOR_START2 MSG MY_TAB "(func2): go to sleep at %llu %d %u, %u, %u, %u\n", ktime_get(), __get_cpuid(0, &a, &b, &c, &d), a, b, c, d);
+    printk(COLOR_START2 MSG MY_TAB "(func2): go to sleep at %llu\n", ktime_get());
     mdelay(100);
     //msleep(10);
-    printk(COLOR_START2 MSG "           (func2): return at      %llu\n", ktime_get());
+    printk(COLOR_START2 MSG MY_TAB "(func2): return at      %llu\n", ktime_get());
 }
 
 
@@ -66,8 +71,8 @@ irqreturn_t my_handler(int irq, void *dev)
     {
         //добавить работу в очередь работ (назначает работу текущему процессору)
         printk(MSG "add works to queue\n");
-        queue_work(my_work_queue, &my_work1);
-        queue_work(my_work_queue, &my_work2);
+        //queue_work(my_work_queue, &my_work1);
+        //queue_work(my_work_queue, &my_work2);
 
         queue_work_on(0, my_work_queue, &my_work1);
         queue_work_on(1, my_work_queue, &my_work2);
