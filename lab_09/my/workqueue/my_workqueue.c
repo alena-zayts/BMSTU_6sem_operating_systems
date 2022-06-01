@@ -16,7 +16,7 @@ MODULE_AUTHOR("ALENA");
 
 #define IRQ_NUM 1
 
-#define MSG ">> my_workqueue6: "
+#define MSG ">> my_workqueue7: "
 #define MY_TAB "" //"        "
 #define ERR_KLAV false
 
@@ -94,6 +94,7 @@ static int __init my_init(void)
     }
 
     //if (!(my_work_queue = create_workqueue("my_workqueue")))
+
     if (!(my_work_queue = alloc_workqueue("my_workqueue", __WQ_LEGACY | WQ_MEM_RECLAIM | WQ_UNBOUND, 1)))
     {
         free_irq(IRQ_NUM, &my_handler);
