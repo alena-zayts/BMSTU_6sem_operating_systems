@@ -13,7 +13,7 @@
 #include <linux/time.h>
 #include <linux/delay.h>
 
-#define MSG ">> my_tasklet2: "
+#define MSG ">> my_tasklet: "
 #define MY_TAB "" //"        "
 #define WITH_SLEEP false
 #define ERR_KLAV false
@@ -160,7 +160,7 @@ make disclean
 make
 sudo insmod my_tasklet.ko
 lsmod | grep my_tasklet
-sudo dmesg | grep my_tasklet
+sudo dmesg | grep my_tasklet:
 cat /proc/interrupts | head -n 1 && cat /proc/interrupts| grep my_dev_name
 */
 
