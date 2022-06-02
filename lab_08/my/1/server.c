@@ -44,7 +44,7 @@ int main(void)
     }
 
     signal(SIGINT, sigint_handler); //изменение обработчика сигнала
-    printf("Listening.\nPress Ctrl + C to stop...\n");
+    printf("Listening.\nPress Ctrl + Z to stop...\n");
 
     while (1)
     {
