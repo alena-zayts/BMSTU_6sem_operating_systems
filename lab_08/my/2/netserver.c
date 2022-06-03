@@ -8,27 +8,51 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #define BUF_SIZE 256
 #define PORT 3425
-#define NUMBER_OF_CLIENTS 5
+#define MAX_CLIENTS_NUMB 5
 
-void receive(int *clients, int n, fd_set *set)
+
+int sock_fd;
+//пользуемся recv и send, так как сокет соединен (connect)
+
+
+void del_socket(void)
+{
+    if (close(sock_fd) == -1) //закрытие сокета
+    {
+        printf("close() failed\n");
+        return;
+    }
+}
+
+void sigtstp_handler(int signum)
+{
+	printf("\nCatch SIGTSTP\n");
+    del_socket();
+    exit(0);
+}
+
+
+
+void receive_from_clients(int *clients, fd_set *fd_readset)
 {
     char buf[BUF_SIZE];
     int bytes;
 
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < MAX_CLIENTS_NUMB; i++)
     {
-        if (FD_ISSET(clients[i], set))
+        // FD_ISSET проверяет, является ли описатель частью набора
+        if (FD_ISSET(clients[i], fd_readset))
         {
-            // Поступили данные от клиента, читаем их
             bytes = recv(clients[i], buf, BUF_SIZE, 0);
 
             if (bytes <= 0)
             {
                 // Соединение разорвано, удаляем сокет из множества
-                printf("Client[%d] disconnected\n", i);
+                printf("Client %d disconnected\n", i);
                 close(clients[i]);
                 clients[i] = 0;
             }
@@ -36,100 +60,125 @@ void receive(int *clients, int n, fd_set *set)
             {
                 // Отправляем данные обратно клиенту
                 buf[bytes] = 0;
-                printf("Client[%d] sent %s\n", i, buf);
-                send(clients[i], buf, bytes, 0);
+                printf("Server recieved from client %d: %s\n", i, buf);
+                
+                buf[bytes] = ' ';
+                buf[bytes + 1] = 'o';
+                buf[bytes + 2] = 'k';
+                buf[bytes + 3] = 0;
+                send(clients[i], buf, bytes + 3, 0);
             }
         }
     }
 }
 
-int main(int argc, char ** argv)
+int main(void)
 {
-     int sock;
-     int new_sock;
      struct sockaddr_in serv_addr;
-     fd_set set;
-     int clients[NUMBER_OF_CLIENTS] = {0};
-     int mx;
-     int flag = 1;
+     fd_set fd_readset;
+     int clients[MAX_CLIENTS_NUMB] = {0};
 
-     sock = socket(AF_INET, SOCK_STREAM, 0);
-     if (socket < 0)
+     sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+     if (sock_fd == -1)
      {
-       printf("socket() failed: %d\n", errno);
+       printf("socket() failed\n");
        return EXIT_FAILURE;
      }
-
-     fcntl(sock, F_SETFL, O_NONBLOCK);
+	
+	/*
+	По умолчанию функция socket() создает блокирующий сокет. 
+	Чтобы сделать его не- блокирующим, надо использовать функцию fcntl(2) с флагом O_NONBLOCK:
+	Теперь любой вызов функции read() для сокета sock_fd будет возвращать управление сразу же. 
+	Если на входе сокета нет данных для чтения, функция read() вернет значение EAGAIN. 
+	*/
+     fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
      serv_addr.sin_family = AF_INET;
-     serv_addr.sin_addr.s_addr = INADDR_ANY;
+     serv_addr.sin_addr.s_addr = INADDR_ANY; //сервер зарегистрируется на всех адресах той машины, на которой она выполняется.
      serv_addr.sin_port = htons(PORT);
 
-     if (bind(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+     if (bind(sock_fd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == -1)
      {
-       printf("bind() failed: %d\n", errno);
+       printf("bind() failed\n");
+	   del_socket();
        return EXIT_FAILURE;
      }
 
-     if (listen(sock, 6) < 0)
+     if (listen(sock_fd, MAX_CLIENTS_NUMB) == -1)
      {
-         printf("listen() failed: %d\n", errno);
+         printf("listen() failed\n");
+         del_socket();
          return EXIT_FAILURE;
      }
 
-     printf("waiting...\n");
+     signal(SIGTSTP, sigtstp_handler); //изменение обработчика сигнала (с SIGINT проблемы)
+     printf("Listening.\nPress Ctrl + Z to stop...\n");
 
      while(1)
      {
-         // Заполняем множество сокетов
-         FD_ZERO(&set);
-         FD_SET(sock, &set);
-         mx = sock;
+         // initialize the descriptor set to the null set.
+         FD_ZERO(&fd_readset);
+         // add the file descriptor fd to the set. If the file descriptor fd is already in this set, there shall be no effect on the set, nor will an error be returned.
+         FD_SET(sock_fd, &fd_readset);
+         int max_fd = sock_fd;
 
-         for (int i = 0; i < NUMBER_OF_CLIENTS; i++)
+         for (int i = 0; i < MAX_CLIENTS_NUMB; i++)
          {
              if (clients[i])
              {
-                 FD_SET(clients[i], &set);
+                 FD_SET(clients[i], &fd_readset);
              }
-             mx = (mx > clients[i]) ? mx : clients[i];
+             if (max_fd < clients[i])
+                max_fd = clients[i];
+         }
+         
+         /*
+         select(int n, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+         n на единицу больше самого большого номера описателей из всех наборов.
+         Второй, третий и четвертый параметры - наборы дескрипторов, которые следует проверять, на готовность к 
+         чтению, записи и на наличие исключительных ситуаций. Сама функция select() – блокирующая, она возвращает 
+         управление, если хотя бы один из проверяемых сокетов готов к выполнению операции. 
+         В качестве последнего параметра - интервал времени, по прошествии которого она вернет управление в любом случае.
+         возвращают количество описателей, находящихся в наборах, причем это количество может быть равным нулю, 
+         если время ожидания на исходе, а интересующие нас события так и не произошли.
+         */
+         if (select(max_fd + 1, &fd_readset, NULL, NULL, NULL) <= 0)
+         {
+             printf("select() failed\n");
+             del_socket();
+             return EXIT_FAILURE;
          }
 
-         // Ждём события в одном из сокетов
-         if (select(mx + 1, &set, NULL, NULL, NULL) <= 0)
+         // FD_ISSET проверяет, является ли описатель частью набора
+         if (FD_ISSET(sock_fd, &fd_readset))
          {
-             perror("select");
-             exit(1);
-         }
+             // Поступил новый запрос на соединение
+             // пока не появится "свисток" connect (NULL - адрес запросившего)
+             // тут адрес можно сделать
+             int new_sock = accept(sock_fd, NULL, NULL);
 
-         // Определяем тип события и выполняем соответствующие действия
-         if (FD_ISSET(sock, &set))
-         {
-             // Поступил новый запрос на соединение, используем accept
-             new_sock = accept(sock, NULL, NULL);
-
-             if (new_sock < 0)
+             if (new_sock == -1)
              {
-                 perror("accept");
-                 exit(1);
+                 printf("accept() failed\n");
+                 del_socket();
+                 return EXIT_FAILURE;
              }
 
              fcntl(new_sock, F_SETFL, O_NONBLOCK);
 
-             flag = 1;
-             for (int i = 0; i < NUMBER_OF_CLIENTS && flag; i++)
+             int not_found = 1;
+             for (int i = 0; i < MAX_CLIENTS_NUMB && not_found; i++)
              {
                  if (!clients[i])
                  {
                      clients[i] = new_sock;
-                     printf("Added as client №%d\n", i);
-                     flag = 0;
+                     printf("New connection %d\n", i);
+                     not_found = 0;
                  }
              }
          }
 
-         receive(clients, NUMBER_OF_CLIENTS, &set);
+         receive_from_clients(clients, &fd_readset);
      }
      return EXIT_SUCCESS;
 }
