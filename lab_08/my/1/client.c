@@ -32,17 +32,6 @@ int main(void)
 	char buf[BUF_SIZE];
     sprintf(buf, "pid %d", getpid());
 	
-	// Если при работе с датаграммными сокетами вызвать функцию connect, то можно не указывать адрес назначения каждый раз
-	/*
-	if (connect(sock_fd, &srvr_name, sizeof(srvr_name)) == -1)
- 	{
-		printf("connect() failed");
-		return EXIT_FAILURE;
- 	}
-	
-	if (sendto(sock_fd, buf, strlen(buf), 0, NULL, NULL) == -1)
-	*/
-	
 	// передача данных серверу. 4 параметр 0 - дополнительные флаги, далее адрес сервера и его длина
 	if (sendto(sock_fd, buf, strlen(buf), 0, &srvr_name, strlen(srvr_name.sa_data) + sizeof(srvr_name.sa_family)) == -1)
     {

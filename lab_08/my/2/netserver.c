@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <string.h>
 
 #define BUF_SIZE 256
 #define PORT 3425
@@ -44,29 +45,23 @@ void receive_from_clients(int *clients, fd_set *fd_readset)
 
     for (int i = 0; i < MAX_CLIENTS_NUMB; i++)
     {
-        // FD_ISSET проверяет, является ли описатель частью набора
+        // FD_ISSET проверяет, является ли описатель частью набора 
         if (FD_ISSET(clients[i], fd_readset))
         {
             bytes = recv(clients[i], buf, BUF_SIZE, 0);
-
-            if (bytes <= 0)
+	        if (!bytes)
             {
-                // Соединение разорвано, удаляем сокет из множества
-                printf("Client %d disconnected\n", i);
-                close(clients[i]);
-                clients[i] = 0;
-            }
-            else
+		        close(clients[i]);
+		        clients[i] = 0;
+	        }
+            else if (bytes > 0)
             {
-                // Отправляем данные обратно клиенту
                 buf[bytes] = 0;
                 printf("Server recieved from client %d: %s\n", i, buf);
-                
-                buf[bytes] = ' ';
-                buf[bytes + 1] = 'o';
-                buf[bytes + 2] = 'k';
-                buf[bytes + 3] = 0;
-                send(clients[i], buf, bytes + 3, 0);
+
+                memset(buf, 0, BUF_SIZE);
+                sprintf(buf, "Message recieved. You are number %d\n", i);
+                send(clients[i], buf, sizeof(buf), 0);
             }
         }
     }
@@ -91,7 +86,7 @@ int main(void)
 	Теперь любой вызов функции read() для сокета sock_fd будет возвращать управление сразу же. 
 	Если на входе сокета нет данных для чтения, функция read() вернет значение EAGAIN. 
 	*/
-     fcntl(sock_fd, F_SETFL, O_NONBLOCK);
+    fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
      serv_addr.sin_family = AF_INET;
      serv_addr.sin_addr.s_addr = INADDR_ANY; //сервер зарегистрируется на всех адресах той машины, на которой она выполняется.
@@ -111,12 +106,12 @@ int main(void)
          return EXIT_FAILURE;
      }
 
-     signal(SIGTSTP, sigtstp_handler); //изменение обработчика сигнала (с SIGINT проблемы)
+     signal(SIGTSTP, sigtstp_handler); //изменение обработчика сигнала (с SIGINT проблемы) 
      printf("Listening.\nPress Ctrl + Z to stop...\n");
 
      while(1)
      {
-         // initialize the descriptor set to the null set.
+         // initialize the descriptor set to the null set. 
          FD_ZERO(&fd_readset);
          // add the file descriptor fd to the set. If the file descriptor fd is already in this set, there shall be no effect on the set, nor will an error be returned.
          FD_SET(sock_fd, &fd_readset);

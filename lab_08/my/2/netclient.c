@@ -21,7 +21,6 @@ int main(void)
     int sock_fd;
     struct sockaddr_in serv_addr;
     struct hostent *host;
-    char buf[BUF_SIZE];
     char message[BUF_SIZE];
 	
 	//Сокеты типа SOCK_STREAM являются соединениями полнодуплексных байтовых потоков. Они не сохраняют границы записей. 
@@ -58,17 +57,22 @@ int main(void)
     {
         memset(message, 0, BUF_SIZE);
         sprintf(message, "pid = %d\n", getpid());
-		
 		// 0 - флаги
         if (send(sock_fd, message, sizeof(message), 0) == -1)
         {
             printf("send() failed\n");
             return EXIT_FAILURE;
         }
-		
-        recv(sock_fd, buf, sizeof(message), 0);
 
-        printf("Client recieved %s\n", buf);
+
+		memset(message, 0, BUF_SIZE);
+        int bytes = recv(sock_fd, message, BUF_SIZE, 0);
+
+        if (bytes > 0)
+        {
+            message[bytes] = 0;
+            printf("Client recieved from server: %s\n", message);
+        }
 
         sleep(1 + rand() % 3);
     }

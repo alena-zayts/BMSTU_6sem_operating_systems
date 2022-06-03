@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define SOCK_NAME "socket.soc"
+#define SOCK_NAME "mysocket.soc"
 #define BUF_SIZE 256
 
 int sock_fd;
@@ -21,7 +21,7 @@ void del_socket(void)
     }
     if (unlink(SOCK_NAME) == -1) //удаление файла сокета
     {
-        printf("unlink() failed");
+        printf("unlink() returned -1");
     }
 }
 
@@ -34,7 +34,7 @@ void sigint_handler(int signum)
 
 int main(void)
 {
-    struct sockaddr srvr_name, rcvr_name;
+    struct sockaddr srvr_name;
     char buf[BUF_SIZE];
     int  bytes;
 
@@ -50,7 +50,7 @@ int main(void)
 	//привязывает сокет к локальному адресу
     if (bind(sock_fd, &srvr_name, strlen(srvr_name.sa_data) + sizeof(srvr_name.sa_family)) == -1)
     {
-        printf("bind() failed");
+        printf("bind() failed\n");
         del_socket();
         return EXIT_FAILURE;
     }
