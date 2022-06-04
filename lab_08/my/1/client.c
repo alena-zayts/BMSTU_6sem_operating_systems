@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#define SOCK_NAME "socket.soc"
+#define SOCK_NAME "mysocket.soc"
 #define BUF_SIZE 256
 
 

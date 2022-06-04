@@ -149,7 +149,6 @@ int main(void)
          {
              // Поступил новый запрос на соединение
              // пока не появится "свисток" connect (NULL - адрес запросившего)
-             // тут адрес можно сделать
              int new_sock = accept(sock_fd, NULL, NULL);
 
              if (new_sock == -1)
