@@ -9,28 +9,45 @@
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
+#include <signal.h>
 
-#define PORT 3425
 #define BUF_SIZE 256
-#define COUNT 5
+#define PORT 3425
 #define SOCK_ADDR "localhost"
+
+
+int sock_fd;
+
+
+void sigtstp_handler(int signum)
+{
+	printf("\nCatch SIGTSTP\n");
+    if (close(sock_fd) == -1) //закрытие сокета
+    {
+        printf("close() failed\n");
+        return;
+    }
+    exit(0);
+}
+
 
 int main(void)
 {
 	srand(time(NULL));
-    int sock_fd;
+
     struct sockaddr_in serv_addr;
     struct hostent *host;
     char message[BUF_SIZE];
 	
-	//Сокеты типа SOCK_STREAM являются соединениями полнодуплексных байтовых потоков. Они не сохраняют границы записей. 
-	//Потоковый сокет должен быть в состоянии соединенияперед тем, как из него можно будет отсылать данные или принимать их.
+	
     sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (sock_fd < 0)
     {
       printf("socket() failed\n");
       return EXIT_FAILURE;
     }
+	
+	signal(SIGTSTP, sigtstp_handler); //изменение обработчика сигнала
 	
 	//преобразование доменного имени сервера в его сетевой адрес.
     host = gethostbyname(SOCK_ADDR);
@@ -48,8 +65,8 @@ int main(void)
     // Для установления активного соединения по переданному адресу. 
 	if (connect(sock_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1)
     {
-      printf("connect() failed\n");
-      return EXIT_FAILURE;
+		printf("connect() failed\n");
+        return EXIT_FAILURE;
     }
 
 
@@ -57,7 +74,7 @@ int main(void)
     {
         memset(message, 0, BUF_SIZE);
         sprintf(message, "pid = %d\n", getpid());
-		// 0 - флаги
+
         if (send(sock_fd, message, sizeof(message), 0) == -1)
         {
             printf("send() failed\n");
