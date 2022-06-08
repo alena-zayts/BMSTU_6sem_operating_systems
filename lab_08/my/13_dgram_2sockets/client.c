@@ -78,33 +78,33 @@ int main(int argc, char* argv[])
 	
 	while (1)
 	{
-	bytes = sendto(sfd, msg, strlen(msg), 0, (struct sockaddr*) &server_addr, sizeof(server_addr));
-	if (bytes <= 0) 
-	{
-		printf("sendto failed");
-		cleanup_socket();
-		return errno;
-	}
-	
-	/*
-    if (send(sfd, msg, strlen(msg), 0) == -1) 
-	{ 
-        perror("send failed");
-        return errno;
-    } 
-	*/
-	
+		bytes = sendto(sfd, msg, strlen(msg), 0, (struct sockaddr*) &server_addr, sizeof(server_addr));
+		if (bytes <= 0) 
+		{
+			printf("sendto failed");
+			cleanup_socket();
+			return errno;
+		}
 
-    char servermsg[BUF_SIZE] = {0};
-    bytes = recv(sfd, servermsg, sizeof(servermsg), 0);
-    if (bytes < 0) 
-	{
-        perror("recv failed");
-        return errno;
-    } 
+		/*
+		if (send(sfd, msg, strlen(msg), 0) == -1) 
+		{ 
+			perror("send failed");
+			return errno;
+		} 
+		*/
 
-    printf("Client received message: %s\n", servermsg);
-	sleep(3);
+
+		char servermsg[BUF_SIZE] = {0};
+		bytes = recv(sfd, servermsg, sizeof(servermsg), 0);
+		if (bytes < 0) 
+		{
+			perror("recv failed");
+			return errno;
+		} 
+
+		printf("Client received message: %s\n", servermsg);
+		sleep(3);
 	}
 	
 	

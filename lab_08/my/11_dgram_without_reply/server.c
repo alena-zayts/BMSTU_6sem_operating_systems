@@ -55,8 +55,10 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    signal(SIGTSTP, sigint_handler); //изменение обработчика сигнала (с SIGINT проблемы)
+    signal(SIGTSTP, sigint_handler); //изменение обработчика сигнала
+	
 	//listen будет иметь смысл только для протоколов, нацеленных на соединение (то есть только TCP)
+	//поэтому здесь не используется
     printf("Waiting for messages.\nPress Ctrl + Z to stop...\n");
 
     while (1)
