@@ -37,11 +37,9 @@ int main()
 	int client_sock_fd;
 	struct sockaddr_un sock_addr;
 	
-
 	signal(SIGTSTP, sigtstp_handler);
-	del_socket();
 	
-	sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+	sock_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_NONBLOCK , 0);
 	if(sock_fd == -1)
 	{
 		printf("socket() failed\n");
@@ -78,12 +76,11 @@ int main()
 
 		if((client_sock_fd = accept(sock_fd, (struct sockaddr*)&remote_sock_addr, &sock_len)) == -1 )
 		{
-			printf("Error on accept() call \n");
-			return 1;
+			continue;
+			//printf("Error on accept() call \n");
+			//return 1;
 		}
 
-
-//while (1)
 
 		memset(recv_buf, 0, BUF_SIZE);
 		memset(send_buf, 0, BUF_SIZE);
@@ -102,11 +99,10 @@ int main()
 		}
 		else
 		{
-			printf("recv() failed. Waiting for new connection\n");
-			break;
+			continue;
+			//printf("recv() failed. Waiting for new connection\n");
+			//break;
 		}
-
-		//close(client_sock_fd);
 	}
 	
 	del_socket();

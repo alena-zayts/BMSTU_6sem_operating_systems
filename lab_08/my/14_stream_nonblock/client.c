@@ -39,7 +39,7 @@ int main()
 	
 	while (1) 
 	{
-		if((sock_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1 )
+		if((sock_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_NONBLOCK , 0)) == -1 )
 		{
 			printf("socket() failed\n");
 			return EXIT_FAILURE;
@@ -53,9 +53,6 @@ int main()
 			return EXIT_FAILURE;
 		}
 
-
-//printf("Connected.\n");	
-//while (1) 
 	
 		if(send(sock_fd, send_msg, strlen(send_msg), 0 ) == -1)
 		{
@@ -64,16 +61,21 @@ int main()
 		
 		
 		memset(recv_msg, 0, BUF_SIZE);
-
+		
+		
+	while (1)
+	{
 		if((bytes = recv(sock_fd, recv_msg, BUF_SIZE, 0)) > 0 )
 		{
 			printf("Client received: %s\n", recv_msg);
+			break;
 		}
 		else
 		{
 			if(bytes < 0)
 			{
-				printf("recv() failed\n");
+				continue;
+				//printf("recv() failed\n");
 			}
 			else
 			{
@@ -83,6 +85,7 @@ int main()
 			}
 
 		}
+	}
 		sleep(3);
 		close(sock_fd);
 	}

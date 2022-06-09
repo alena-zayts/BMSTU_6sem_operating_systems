@@ -76,8 +76,8 @@ int main(int argc, char* argv[])
 	size_t bytes;
 	
 	
-	while (1)
-	{
+	//while (1)
+	//{
 		bytes = sendto(sfd, msg, strlen(msg), 0, (struct sockaddr*) &server_addr, sizeof(server_addr));
 		if (bytes <= 0) 
 		{
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 
 		printf("Client received message: %s\n", servermsg);
 		sleep(3);
-	}
+	//}
 	
 	
     cleanup_socket();
