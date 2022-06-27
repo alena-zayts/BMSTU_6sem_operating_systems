@@ -1,1 +1,0 @@
-cmd_/media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/Module.symvers := sed 's/\.ko$$/\.o/' /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/modules.order | scripts/mod/modpost -m -a  -o /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_07/src/Module.symvers -e -i Module.symvers   -T -

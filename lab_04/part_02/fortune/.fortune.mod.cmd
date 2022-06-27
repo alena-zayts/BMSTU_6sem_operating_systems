@@ -1,1 +1,0 @@
-cmd_/media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_04/part_02/fortune/fortune.mod := { echo  /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_04/part_02/fortune/fortune.o;  echo; } > /media/psf/Home/Desktop/BMSTU_6sem_operating_systems/lab_04/part_02/fortune/fortune.mod

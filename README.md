@@ -1,62 +1,28 @@
 # BMSTU_6sem_operating_systems
 6th sem BMSTU, Operating systems
 
-**where is Ubuntu:**
+## Экзамен
 
-C:\Users\alena\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\alena
+Все в 3 файлах по темам: Ввод-вывод и сокеты, Управление устройствами и драйверы, ФС + Модули + open()
 
+## Лабы
 
+1. Демоны
 
+2. Файлы и каталоги
 
-https://github.com/Euclidophren/OperationSystems
-(10 лаб с ответами)
+3. Загружаемые модули ядра (2 части)
 
-https://github.com/TheSawIsTheLaw/OperatingSystems/tree/master/sem_02
-(9 + экз)
+4. 1) Файловая система proc и ее файлики 2) Фортунки и seq_file
 
-https://github.com/Sunshine-ki/BMSTU6_OS
-(9, экз, материалы)
+5. open() в различных вариантах
 
-https://github.com/chrislvt/OS
-(солянка)
+6. Реализация системного вызова open() (схемы алгоритма)
 
------
+7. Создание собственной файловой системы
 
-https://github.com/AnaNek/Operating_systems/tree/master/sem_06
-(9, лекции, экзамен)
-							
+8. Сокеты (миллион рабочих вариантов)
 
-https://github.com/NastyRu/Operating_systems/tree/master/semestr2
-(9)
+9. Тасклеты и очереди работ
 
-https://github.com/Winterpuma/bmstu_OS/tree/master/6_semester
-(2-9)
-
-https://github.com/Justarone/bmstu-os/tree/master/sem_02
-(1-6, 8)
-
-https://github.com/qwertyKira00/sem6/tree/master/os
-(9 + пара лекций)
-
-
-https://github.com/wcdbmv/OS
-(9 + экз)
-
-https://github.com/hackfeed/os-6th-sem-labs
-(9)
-
-https://github.com/bmstu-ics7/operating-systems/tree/master/sem_02
-(9)
-
-
-https://github.com/mRrvz/bmstu-os/tree/master/sem_02
-(8)
-
-https://github.com/TinyMarcus/OS/tree/master/sem_06
-(9)
-
-https://github.com/ZeynalovZ/Operating-Systems/tree/master/sem2
-(2-8)
-
-
-https://github.com/teopalmer/os/tree/master/6sem
+В некоторых папках с лабами есть теория к ним (методички и записи с лекций)
